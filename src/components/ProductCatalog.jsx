@@ -1,0 +1,389 @@
+import React, { useState, useMemo, useEffect } from 'react';
+import { SlidersHorizontal, X } from 'lucide-react';
+import ProductCard from './ProductCard';
+import { fetchProducts } from '../supabase/products';
+
+const CATEGORIES = ['Tout', 'Soutien-gorge', 'Ensembles', 'Culottes', 'Pyjamas', 'Nuisettes', 'Corsets'];
+const SORT_OPTIONS = [
+  { label: 'Nouveautes', value: 'new' },
+  { label: 'Prix croissant', value: 'price-asc' },
+  { label: 'Prix decroissant', value: 'price-desc' },
+  { label: 'Promotions', value: 'promo' },
+];
+
+const COLOR_MAP = {
+  noir: '#1C1C1C',
+  rose: '#F4A7B9',
+  blanc: '#F8F8F8',
+  nude: '#D4A99A',
+  rouge: '#E63946',
+  lilas: '#C0A0D0',
+};
+
+const ALL_SIZES = ['XS', 'S', 'M', 'L', 'XL', '85B', '90C', '95D'];
+const ALL_COLORS = Object.keys(COLOR_MAP);
+
+function FilterBottomSheet({ isOpen, onClose, filters, setFilters }) {
+  const [local, setLocal] = useState({ ...filters });
+
+  function apply() {
+    setFilters(local);
+    onClose();
+  }
+
+  function reset() {
+    const clean = { priceMax: 10000, sizes: [], colors: [] };
+    setLocal(clean);
+    setFilters(clean);
+  }
+
+  function toggleArr(key, val) {
+    setLocal((prev) => ({
+      ...prev,
+      [key]: prev[key].includes(val)
+        ? prev[key].filter((v) => v !== val)
+        : [...prev[key], val],
+    }));
+  }
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 z-40 bg-[#1C2340]/30 transition-sheet"
+        style={{ opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? 'auto' : 'none' }}
+        onClick={onClose}
+        aria-hidden="true"
+      />
+      {/* Sheet */}
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Filtres avances"
+        className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl transition-sheet overscroll-contain"
+        style={{
+          transform: isOpen ? 'translateY(0)' : 'translateY(105%)',
+          maxHeight: '85vh',
+          overflow: 'auto',
+          paddingBottom: 'env(safe-area-inset-bottom, 16px)',
+        }}
+      >
+        {/* Handle + header */}
+        <div className="sticky top-0 bg-white pt-4 px-5 pb-3 z-10">
+          <div className="mx-auto w-10 h-1 rounded-full bg-[#EBB4BB] mb-4" />
+          <div className="flex items-center justify-between">
+            <h3 className="font-serif text-[#1C2340]" style={{ fontSize: '20px', fontWeight: 600 }}>
+              Filtres
+            </h3>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={reset}
+                className="font-sans text-[#9CA3AF] underline"
+                style={{ fontSize: '14px' }}
+              >
+                Reinitialiser
+              </button>
+              <button onClick={onClose} aria-label="Fermer" className="p-1">
+                <X size={20} color="#1C2340" strokeWidth={1.8} />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="px-5 pb-6 space-y-7">
+          {/* Price range */}
+          <div>
+            <p className="font-sans font-semibold text-[#1C2340] mb-3" style={{ fontSize: '15px' }}>
+              Prix maximum
+            </p>
+            <input
+              type="range"
+              min={0}
+              max={10000}
+              step={100}
+              value={local.priceMax}
+              onChange={(e) => setLocal((p) => ({ ...p, priceMax: Number(e.target.value) }))}
+              className="w-full"
+              aria-label={`Prix maximum : ${local.priceMax} DZD`}
+            />
+            <div className="flex justify-between mt-1">
+              <span className="font-sans text-[#9CA3AF]" style={{ fontSize: '13px' }}>0 DZD</span>
+              <span className="font-sans font-semibold text-[#1C2340]" style={{ fontSize: '13px' }}>
+                {local.priceMax.toLocaleString('fr-DZ')} DZD
+              </span>
+            </div>
+          </div>
+
+          {/* Sizes */}
+          <div>
+            <p className="font-sans font-semibold text-[#1C2340] mb-3" style={{ fontSize: '15px' }}>
+              Taille
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {ALL_SIZES.map((s) => {
+                const active = local.sizes.includes(s);
+                return (
+                  <button
+                    key={s}
+                    onClick={() => toggleArr('sizes', s)}
+                    aria-pressed={active}
+                    className="rounded-full border font-sans font-medium transition-all duration-150"
+                    style={{
+                      padding: '6px 14px',
+                      fontSize: '13px',
+                      background: active ? '#1C2340' : 'transparent',
+                      color: active ? '#fff' : '#1C2340',
+                      borderColor: active ? '#1C2340' : '#EBB4BB',
+                    }}
+                  >
+                    {s}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Colors */}
+          <div>
+            <p className="font-sans font-semibold text-[#1C2340] mb-3" style={{ fontSize: '15px' }}>
+              Couleur
+            </p>
+            <div className="flex flex-wrap gap-3">
+              {ALL_COLORS.map((c) => {
+                const active = local.colors.includes(c);
+                return (
+                  <button
+                    key={c}
+                    onClick={() => toggleArr('colors', c)}
+                    aria-pressed={active}
+                    aria-label={c}
+                    title={c}
+                    className="rounded-full transition-all duration-150"
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      background: COLOR_MAP[c],
+                      border: active ? '3px solid #1C2340' : '2px solid #EBB4BB',
+                      outline: active ? '2px solid white' : 'none',
+                      outlineOffset: '-4px',
+                    }}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Apply button */}
+        <div className="sticky bottom-0 bg-white border-t border-[#FDE8EC] px-5 py-4">
+          <button
+            id="filter-apply-btn"
+            onClick={apply}
+            className="w-full bg-[#1C2340] text-white font-sans font-semibold rounded-full hover:bg-[#2D375F] transition-colors duration-200"
+            style={{ height: '52px', fontSize: '15px', letterSpacing: '0.04em' }}
+          >
+            Appliquer les filtres
+          </button>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default function ProductCatalog({
+  onAddToCart,
+  onWishlist,
+  wishlist,
+  onCardClick,
+  initialCategory,
+}) {
+  const [activeCategory, setActiveCategory] = useState(initialCategory || 'Tout');
+  const [activeSort, setActiveSort] = useState('new');
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
+  const [advFilters, setAdvFilters] = useState({ priceMax: 10000, sizes: [], colors: [] });
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Load products from Supabase
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const result = await fetchProducts({ onlyActive: true, limit: 100 });
+        setProducts(result.products);
+      } catch (error) {
+        console.error('Erreur chargement produits:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadProducts();
+  }, []);
+
+  // Sync external category changes
+  useEffect(() => {
+    if (initialCategory) setActiveCategory(initialCategory);
+  }, [initialCategory]);
+
+  const filtered = useMemo(() => {
+    let list = [...products];
+
+    // Category
+    if (activeCategory !== 'Tout') {
+      list = list.filter((p) => p.category === activeCategory);
+    }
+
+    // Advanced filters
+    list = list.filter((p) => p.price <= advFilters.priceMax);
+    if (advFilters.sizes.length > 0) {
+      list = list.filter((p) => advFilters.sizes.some((s) => p.sizes.includes(s)));
+    }
+    if (advFilters.colors.length > 0) {
+      list = list.filter((p) => advFilters.colors.some((c) => p.colors.includes(c)));
+    }
+
+    // Sort
+    switch (activeSort) {
+      case 'price-asc': list.sort((a, b) => a.price - b.price); break;
+      case 'price-desc': list.sort((a, b) => b.price - a.price); break;
+      case 'promo': list.sort((a, b) => (b.badge === 'promo' ? 1 : 0) - (a.badge === 'promo' ? 1 : 0)); break;
+      case 'new': list.sort((a, b) => (b.badge === 'new' ? 1 : 0) - (a.badge === 'new' ? 1 : 0)); break;
+      default: break;
+    }
+
+    return list;
+  }, [products, activeCategory, activeSort, advFilters]);
+
+  const hasActiveFilters = advFilters.sizes.length > 0 || advFilters.colors.length > 0 || advFilters.priceMax < 10000;
+
+  return (
+    <section id="catalog" className="py-10 max-w-screen-xl mx-auto px-4">
+      {/* Title */}
+      <div className="text-center mb-6">
+        <h2
+          className="font-serif text-[#1C2340]"
+          style={{ fontSize: '22px', letterSpacing: '0.08em', fontWeight: 600 }}
+        >
+          Notre Catalogue
+        </h2>
+      </div>
+
+      {/* Filter bar */}
+      <div className="flex items-center gap-2 mb-5 overflow-x-auto scrollbar-hide pb-1">
+        {/* Filtres button */}
+        <button
+          id="open-filters-btn"
+          onClick={() => setFilterSheetOpen(true)}
+          className="flex-none flex items-center gap-1.5 rounded-full border font-sans font-semibold transition-all duration-150 md:hidden"
+          style={{
+            padding: '8px 14px',
+            fontSize: '13px',
+            background: hasActiveFilters ? '#1C2340' : 'white',
+            color: hasActiveFilters ? 'white' : '#1C2340',
+            borderColor: hasActiveFilters ? '#1C2340' : '#EBB4BB',
+            height: '38px',
+          }}
+          aria-label={`Filtres${hasActiveFilters ? ' (actifs)' : ''}`}
+        >
+          <SlidersHorizontal size={14} strokeWidth={1.8} />
+          Filtres
+        </button>
+
+        {/* Category chips */}
+        <div className="flex items-center gap-2 flex-none">
+          {CATEGORIES.map((cat) => {
+            const active = activeCategory === cat;
+            return (
+              <button
+                key={cat}
+                id={`filter-cat-${cat.toLowerCase()}`}
+                onClick={() => setActiveCategory(cat)}
+                className="flex-none rounded-full border font-sans font-medium transition-all duration-150"
+                style={{
+                  padding: '8px 16px',
+                  fontSize: '13px',
+                  height: '38px',
+                  background: active ? '#1C2340' : 'white',
+                  color: active ? '#fff' : '#1C2340',
+                  borderColor: active ? '#1C2340' : '#EBB4BB',
+                  whiteSpace: 'nowrap',
+                }}
+                aria-pressed={active}
+              >
+                {cat}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Sort chips */}
+        <div className="flex items-center gap-2 flex-none ml-2 pl-2 border-l border-[#EBB4BB]">
+          {SORT_OPTIONS.map((opt) => {
+            const active = activeSort === opt.value;
+            return (
+              <button
+                key={opt.value}
+                id={`sort-${opt.value}`}
+                onClick={() => setActiveSort(opt.value)}
+                className="flex-none rounded-full border font-sans font-medium transition-all duration-150"
+                style={{
+                  padding: '8px 14px',
+                  fontSize: '13px',
+                  height: '38px',
+                  background: active ? '#F9D7DA' : 'transparent',
+                  color: '#1C2340',
+                  borderColor: active ? '#EBB4BB' : '#EBB4BB',
+                  whiteSpace: 'nowrap',
+                }}
+                aria-pressed={active}
+              >
+                {opt.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Count */}
+      <p className="font-sans text-[#9CA3AF] mb-4" style={{ fontSize: '13px' }}>
+        {filtered.length} produit{filtered.length !== 1 ? 's' : ''}
+      </p>
+
+      {/* Product grid */}
+      {filtered.length === 0 ? (
+        <div className="text-center py-16">
+          <p className="font-serif text-[#9CA3AF]" style={{ fontSize: '20px' }}>
+            Aucun produit ne correspond aux filtres
+          </p>
+          <button
+            onClick={() => { setActiveCategory('Tout'); setAdvFilters({ priceMax: 10000, sizes: [], colors: [] }); }}
+            className="mt-4 font-sans text-[#1C2340] underline"
+            style={{ fontSize: '14px' }}
+          >
+            Reinitialiser les filtres
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          {filtered.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              onAddToCart={onAddToCart}
+              onWishlist={onWishlist}
+              isWishlisted={wishlist.includes(product.id)}
+              onCardClick={onCardClick}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Filter bottom sheet */}
+      <FilterBottomSheet
+        isOpen={filterSheetOpen}
+        onClose={() => setFilterSheetOpen(false)}
+        filters={advFilters}
+        setFilters={setAdvFilters}
+      />
+    </section>
+  );
+}

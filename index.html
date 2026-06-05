@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="fr" class="h-full bg-[#FDE8EC]">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23F9D7DA%22/><path d=%22M50 30 C35 30, 30 50, 30 60 C30 70, 40 70, 50 60 C60 70, 70 70, 70 60 C70 50, 65 30, 50 30 Z%22 fill=%22%231C2340%22/></svg>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Intime & Co | Lingerie Fine pour Elle</title>
+    <!-- Google Fonts: Cormorant Garamond, Jost, and Alex Brush -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet" />
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              blush: {
+                light: '#FDE8EC',
+                DEFAULT: '#F9D7DA',
+                deep: '#F5C6CB',
+                darker: '#EBB4BB'
+              },
+              navy: {
+                light: '#2D375F',
+                DEFAULT: '#1C2340',
+                dark: '#11162B'
+              },
+              promo: {
+                DEFAULT: '#E63946'
+              },
+              softGray: '#9CA3AF'
+            },
+            fontFamily: {
+              serif: ['"Cormorant Garamond"', 'serif'],
+              sans: ['"Jost"', 'sans-serif'],
+              script: ['"Alex Brush"', 'cursive']
+            },
+            letterSpacing: {
+              wideTitle: '0.08em',
+              tightBody: '-0.01em'
+            }
+          }
+        }
+      }
+    </script>
+  </head>
+  <body class="h-full font-sans text-navy antialiased">
+    <div id="root" class="h-full"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

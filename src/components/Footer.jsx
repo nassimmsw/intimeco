@@ -1,0 +1,198 @@
+import React, { useState } from 'react';
+import InTimeLogo from './InTimeLogo';
+
+function TikTokIcon({ size = 18, color = '#1C2340' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={color} aria-hidden="true">
+      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.79a4.84 4.84 0 01-1.01-.1z"/>
+    </svg>
+  );
+}
+
+function InstagramIcon({ size = 18, color = 'white' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  );
+}
+
+function FacebookIcon({ size = 18, color = 'white' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+    </svg>
+  );
+}
+
+const NAV_LINKS = [
+  { label: 'Accueil', href: '#hero' },
+  { label: 'Collections', href: '#categories' },
+  { label: 'Promotions', href: '#catalog' },
+  { label: 'Notre Boutique', href: '#boutique' },
+  { label: 'Contact', href: '#contact' },
+  { label: 'Politique de retour', href: '#contact' },
+  { label: 'FAQ', href: '#contact' },
+];
+
+export default function Footer() {
+  const [email, setEmail] = useState('');
+  const [subscribed, setSubscribed] = useState(false);
+
+  function handleSubscribe(e) {
+    e.preventDefault();
+    if (email.trim()) {
+      setSubscribed(true);
+      setEmail('');
+    }
+  }
+
+  return (
+    <footer className="bg-[#1C2340] text-white pt-12 pb-6 px-4">
+      <div className="max-w-screen-xl mx-auto">
+        {/* Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+          {/* Column 1: Logo + description */}
+          <div className="flex flex-col items-start gap-4">
+            <div className="flex items-center gap-3">
+              <InTimeLogo size={52} />
+              <div>
+                <p className="font-serif font-bold text-white" style={{ fontSize: '18px' }}>
+                  Intime &amp; Co
+                </p>
+                <p className="font-script text-[#EBB4BB]" style={{ fontSize: '14px' }}>
+                  Lingerie pour elle
+                </p>
+              </div>
+            </div>
+            <p
+              className="font-sans text-white/60 leading-relaxed"
+              style={{ fontSize: '13px', maxWidth: '240px' }}
+            >
+              La lingerie fine algerienne, alliant elegance et confort pour la femme moderne. Boutique a Blida, livraison nationale.
+            </p>
+          </div>
+
+          {/* Column 2: Nav links */}
+          <div>
+            <h3
+              className="font-serif text-white mb-4"
+              style={{ fontSize: '15px', fontWeight: 600, letterSpacing: '0.06em' }}
+            >
+              Navigation
+            </h3>
+            <ul className="space-y-2.5">
+              {NAV_LINKS.map((link) => (
+                <li key={link.label}>
+                  <a
+                    href={link.href}
+                    className="font-sans text-white/60 hover:text-white transition-colors duration-200"
+                    style={{ fontSize: '14px' }}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Column 3: Newsletter + socials */}
+          <div>
+            <h3
+              className="font-serif text-white mb-4"
+              style={{ fontSize: '15px', fontWeight: 600, letterSpacing: '0.06em' }}
+            >
+              Restez informee
+            </h3>
+            {subscribed ? (
+              <p className="font-sans text-[#EBB4BB]" style={{ fontSize: '14px' }}>
+                Merci pour votre inscription !
+              </p>
+            ) : (
+              <form onSubmit={handleSubscribe} className="flex flex-col gap-2">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Votre adresse e-mail"
+                  aria-label="Adresse e-mail pour la newsletter"
+                  required
+                  className="w-full border border-white/20 rounded-xl px-4 bg-white/10 text-white placeholder-white/40 outline-none focus:border-[#EBB4BB] transition-colors"
+                  style={{ height: '48px', fontSize: '14px' }}
+                />
+                <button
+                  id="footer-newsletter-btn"
+                  type="submit"
+                  className="w-full bg-[#F9D7DA] text-[#1C2340] font-sans font-semibold rounded-xl hover:bg-white transition-colors duration-200"
+                  style={{ height: '48px', fontSize: '14px' }}
+                >
+                  S&apos;inscrire
+                </button>
+              </form>
+            )}
+
+            {/* Social icons */}
+            <div className="flex items-center gap-3 mt-5">
+              <a
+                href="https://www.instagram.com/inti.me15"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 transition-colors duration-200"
+              >
+                <InstagramIcon size={18} color="white" />
+              </a>
+              <a
+                href="https://www.facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 transition-colors duration-200"
+              >
+                <FacebookIcon size={18} color="white" />
+              </a>
+              <a
+                href="https://www.tiktok.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="TikTok"
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 transition-colors duration-200"
+              >
+                <TikTokIcon size={18} color="white" />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="h-px bg-white/10 mb-5" />
+
+        {/* Bottom row */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          {/* Payment method badges */}
+          <div className="flex items-center gap-2 flex-wrap justify-center md:justify-start">
+            {['Livraison', 'BaridiMob', 'CCP'].map((method) => (
+              <span
+                key={method}
+                className="font-sans border border-white/20 rounded-lg px-3 text-white/70"
+                style={{ fontSize: '12px', height: '28px', lineHeight: '28px', whiteSpace: 'nowrap' }}
+              >
+                {method}
+              </span>
+            ))}
+          </div>
+
+          {/* Copyright */}
+          <p
+            className="font-sans text-white/40 text-center md:text-right"
+            style={{ fontSize: '12px' }}
+          >
+            &copy; {new Date().getFullYear()} Intime &amp; Co. Tous droits reserves. Blida, Algerie.
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}

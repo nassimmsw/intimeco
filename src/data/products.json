@@ -1,0 +1,274 @@
+[
+  {
+    "id": 1,
+    "name": "Soutien-gorge push-up noir",
+    "category": "Soutien-gorge",
+    "price": 2400,
+    "originalPrice": null,
+    "sizes": ["85B", "90C", "95D"],
+    "colors": ["noir"],
+    "badge": null,
+    "rating": 4.8,
+    "description": "Un soutien-gorge push-up classique alliant maintien parfait et galbe elegant. Realise avec une dentelle delicate et des bonnets moules pour rehausser subtilement votre silhouette.",
+    "details": "85% Polyamide, 15% Elastane. Lavage a la main recommande. Fermeture par agrafes au dos.",
+    "images": [
+      "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1616606103915-dea7be78896d?w=600&auto=format&fit=crop&q=80"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Ensemble dentelle rose",
+    "category": "Ensembles",
+    "price": 4800,
+    "originalPrice": 6200,
+    "sizes": ["85B", "90C", "95D", "S", "M", "L"],
+    "colors": ["rose"],
+    "badge": "promo",
+    "rating": 4.9,
+    "description": "Un ensemble de lingerie ultra-feminin orne de broderies florales raffinees. Comprend le soutien-gorge corbeille assorti d'une culotte legere et confortable.",
+    "details": "Dentelle de Calais, doublure tulle doux. Bretelles ajustables. Culotte doublure coton biologique.",
+    "images": [
+      "https://images.unsplash.com/photo-1616606103915-dea7be78896d?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?w=600&auto=format&fit=crop&q=80"
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Culotte taille haute nude",
+    "category": "Culottes",
+    "price": 1200,
+    "originalPrice": null,
+    "sizes": ["XS", "S", "M", "L", "XL"],
+    "colors": ["nude"],
+    "badge": null,
+    "rating": 4.7,
+    "description": "Une culotte haute sans couture a effet gainant et discret sous les vetements. Un basique indispensable concu pour offrir une sensation de seconde peau.",
+    "details": "Microfibre haut de gamme stretch. Finitions thermocollees invisibles. Gousset 100% coton.",
+    "images": [
+      "https://images.unsplash.com/photo-1582533561751-ef6f6ab93a2e?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1502163140606-888448ae8cfe?w=600&auto=format&fit=crop&q=80"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Nuisette satinee blanc",
+    "category": "Nuisettes",
+    "price": 3500,
+    "originalPrice": null,
+    "sizes": ["XS", "S", "M", "L", "XL"],
+    "colors": ["blanc"],
+    "badge": "new",
+    "rating": 4.9,
+    "description": "Une nuisette en satin de soie fluide ornee de dentelle fine au decollete et a l'ourlet. Des bretelles croisees au dos pour une allure infiniment delicate.",
+    "details": "Satin de polyester haute densite texture soie. Col V en dentelle cil. Longueur mi-cuisse.",
+    "images": [
+      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1608748010899-18f300247112?w=600&auto=format&fit=crop&q=80"
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Pyjama fleuri rose",
+    "category": "Pyjamas",
+    "price": 5200,
+    "originalPrice": null,
+    "sizes": ["XS", "S", "M", "L", "XL"],
+    "colors": ["rose"],
+    "badge": null,
+    "rating": 4.6,
+    "description": "Ensemble de pyjama de detente deux pieces en viscose legere. Chemise boutonnee et pantalon fluide avec de jolis motifs floraux printaniers.",
+    "details": "100% Viscose fluide eco-responsable. Taille elastiquee avec cordon de serrage en satin.",
+    "images": [
+      "https://images.unsplash.com/photo-1608748010899-18f300247112?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=600&auto=format&fit=crop&q=80"
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Corset brode noir",
+    "category": "Corsets",
+    "price": 6500,
+    "originalPrice": null,
+    "sizes": ["XS", "S", "M", "L", "XL"],
+    "colors": ["noir"],
+    "badge": null,
+    "rating": 5.0,
+    "description": "Un corset d'exception structure avec baleines souples et broderies contrastantes. Sublime la cambrure et affine la taille avec elegance.",
+    "details": "Broderie tulle rigide et satin. Lacet traditionnel de serrage satin dans le dos. Armatures bonnets.",
+    "images": [
+      "https://images.unsplash.com/photo-1502163140606-888448ae8cfe?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1582533561751-ef6f6ab93a2e?w=600&auto=format&fit=crop&q=80"
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Soutien-gorge corbeille rouge",
+    "category": "Soutien-gorge",
+    "price": 2800,
+    "originalPrice": 3500,
+    "sizes": ["85B", "90C", "95D"],
+    "colors": ["rouge"],
+    "badge": "promo",
+    "rating": 4.8,
+    "description": "Un soutien-gorge corbeille rouge passion en dentelle florale cils. Offre un decollete carre tres feminin et un maintien confortable.",
+    "details": "Lavage a la main recommande. Bretelles reglables extra douces. Agrafage triple position.",
+    "images": [
+      "https://images.unsplash.com/photo-1582533561751-ef6f6ab93a2e?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?w=600&auto=format&fit=crop&q=80"
+    ]
+  },
+  {
+    "id": 8,
+    "name": "Ensemble soie lilas",
+    "category": "Ensembles",
+    "price": 7200,
+    "originalPrice": null,
+    "sizes": ["85B", "90C", "95D", "S", "M", "L"],
+    "colors": ["lilas"],
+    "badge": "new",
+    "rating": 4.9,
+    "description": "L'alliance absolue de la soie naturelle et d'un coloris lilas pastel envoutant. L'ensemble comprend un soutien-gorge triangle sans armatures et un shorty assorti.",
+    "details": "92% Soie naturelle, 8% Lycra pour le confort. Doublure soie et finitions couture.",
+    "images": [
+      "https://images.unsplash.com/photo-1616606103915-dea7be78896d?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1608748010899-18f300247112?w=600&auto=format&fit=crop&q=80"
+    ]
+  },
+  {
+    "id": 9,
+    "name": "Soutien-gorge triangle blanc",
+    "category": "Soutien-gorge",
+    "price": 2100,
+    "originalPrice": null,
+    "sizes": ["85B", "90C"],
+    "colors": ["blanc"],
+    "badge": null,
+    "rating": 4.5,
+    "description": "Soutien-gorge sans armatures ultra-leger au decollete plongeant. Confectionne dans une micro-dentelle extensible pour un bien-etre quotidien.",
+    "details": "Bretelles elastiques fines. Fermeture dos simple. Pas de rembourrage.",
+    "images": [
+      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?w=600&auto=format&fit=crop&q=80"
+    ]
+  },
+  {
+    "id": 10,
+    "name": "Shorty dentelle rouge",
+    "category": "Culottes",
+    "price": 1400,
+    "originalPrice": 1800,
+    "sizes": ["XS", "S", "M", "L", "XL"],
+    "colors": ["rouge"],
+    "badge": "promo",
+    "rating": 4.7,
+    "description": "Shorty taille basse en dentelle ajouree rouge intense. Une coupe flatteuse et legere qui sublime les hanches avec confort.",
+    "details": "Lavage delicat en filet. 90% Polyamide dentelle cils, 10% Coton doublure gousset.",
+    "images": [
+      "https://images.unsplash.com/photo-1582533561751-ef6f6ab93a2e?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1616606103915-dea7be78896d?w=600&auto=format&fit=crop&q=80"
+    ]
+  },
+  {
+    "id": 11,
+    "name": "Nuisette glamour noir",
+    "category": "Nuisettes",
+    "price": 3800,
+    "originalPrice": null,
+    "sizes": ["XS", "S", "M", "L", "XL"],
+    "colors": ["noir"],
+    "badge": "new",
+    "rating": 4.9,
+    "description": "Une nuisette noire sophistiquee associant transparence et reflets satines. Decollete plongeant dans le dos et jeux de bretelles graphiques.",
+    "details": "Mousseline de soie synthetique et dentelle geometrique. Bretelles reglables coulissantes.",
+    "images": [
+      "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1502163140606-888448ae8cfe?w=600&auto=format&fit=crop&q=80"
+    ]
+  },
+  {
+    "id": 12,
+    "name": "Caraco satin nude",
+    "category": "Pyjamas",
+    "price": 3200,
+    "originalPrice": null,
+    "sizes": ["XS", "S", "M", "L", "XL"],
+    "colors": ["nude"],
+    "badge": null,
+    "rating": 4.6,
+    "description": "Caraco en satin fluide et dentelle fine couleur nude. Ideal pour le sommeil ou a porter sous une veste pour un look raffine de jour.",
+    "details": "Lavage en machine cycle delicat. Satin doux anti-froissage. Fines bretelles reglables.",
+    "images": [
+      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1582533561751-ef6f6ab93a2e?w=600&auto=format&fit=crop&q=80"
+    ]
+  },
+  {
+    "id": 13,
+    "name": "Corset dentelle blanche",
+    "category": "Corsets",
+    "price": 5900,
+    "originalPrice": 7500,
+    "sizes": ["XS", "S", "M", "L"],
+    "colors": ["blanc"],
+    "badge": "promo",
+    "rating": 4.8,
+    "description": "Un corset bustier blanc pur orne de dentelle florale structuree. Ses baleines flexibles sculptent la silhouette tout en assurant un confort optimal.",
+    "details": "Agrafage multi-points sur le dos pour un ajustement parfait. Bonnets push-up integres.",
+    "images": [
+      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1616606103915-dea7be78896d?w=600&auto=format&fit=crop&q=80"
+    ]
+  },
+  {
+    "id": 14,
+    "name": "Culotte dentelle lilas",
+    "category": "Culottes",
+    "price": 1100,
+    "originalPrice": null,
+    "sizes": ["XS", "S", "M", "L", "XL"],
+    "colors": ["lilas"],
+    "badge": null,
+    "rating": 4.4,
+    "description": "Une culotte classique ajouree en dentelle teinte lilas pastel. Legere, romantique et d'une douceur absolue pour toutes les morphologies.",
+    "details": "Bordures festonnees extra-plates et douces. Fond double 100% coton.",
+    "images": [
+      "https://images.unsplash.com/photo-1616606103915-dea7be78896d?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=600&auto=format&fit=crop&q=80"
+    ]
+  },
+  {
+    "id": 15,
+    "name": "Kimono satin rose",
+    "category": "Pyjamas",
+    "price": 4600,
+    "originalPrice": null,
+    "sizes": ["XS", "S", "M", "L", "XL"],
+    "colors": ["rose"],
+    "badge": "new",
+    "rating": 4.8,
+    "description": "Un splendide kimono mi-long en satin rose poudre. Manches larges et ceinture a nouer pour envelopper vos matins de douceur et d'elegance.",
+    "details": "Lavage delicat. Satin haut de gamme opaque. Ceinture amovible en satin assorti.",
+    "images": [
+      "https://images.unsplash.com/photo-1608748010899-18f300247112?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=600&auto=format&fit=crop&q=80"
+    ]
+  },
+  {
+    "id": 16,
+    "name": "Corset brode lilas",
+    "category": "Corsets",
+    "price": 6800,
+    "originalPrice": null,
+    "sizes": ["XS", "S", "M", "L"],
+    "colors": ["lilas"],
+    "badge": "new",
+    "rating": 4.9,
+    "description": "Un bustier corset lilas poudret orne de broderies anglaises et florales exclusives. Un chef-d'œuvre romantique et raffine.",
+    "details": "Sangles ajustables amovibles. Tissus satine rigide et tulle extensible. Lavage a la main.",
+    "images": [
+      "https://images.unsplash.com/photo-1502163140606-888448ae8cfe?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1616606103915-dea7be78896d?w=600&auto=format&fit=crop&q=80"
+    ]
+  }
+]

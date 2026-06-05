@@ -1,0 +1,251 @@
+/* =============================================
+   INTIME & CO — Global Base Styles
+   ============================================= */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: 'Jost', sans-serif;
+  letter-spacing: -0.01em;
+  font-size: 15px;
+  background-color: #FDE8EC;
+  color: #1C2340;
+  overflow-x: hidden;
+  height: 100%;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* =============================================
+   TYPOGRAPHY UTILITIES
+   ============================================= */
+.font-serif  { font-family: 'Cormorant Garamond', serif; }
+.font-sans   { font-family: 'Jost', sans-serif; }
+.font-script { font-family: 'Alex Brush', cursive; }
+
+/* =============================================
+   GRAIN TEXTURE OVERLAY
+   ============================================= */
+.grain-overlay {
+  position: relative;
+}
+.grain-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  z-index: 1;
+}
+
+/* =============================================
+   MARQUEE / SCROLLING TICKER
+   ============================================= */
+@keyframes marquee {
+  0%   { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+.animate-marquee {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: marquee 30s linear infinite;
+  will-change: transform;
+}
+
+/* =============================================
+   HERO FADE-UP ENTRANCE
+   ============================================= */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-up {
+  opacity: 0;
+  animation: fade-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.animation-delay-200 { animation-delay: 200ms; }
+.animation-delay-400 { animation-delay: 400ms; }
+.animation-delay-600 { animation-delay: 600ms; }
+
+/* =============================================
+   HEART PULSE
+   ============================================= */
+@keyframes pulse-scale {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.32); }
+  70%  { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+.animate-heart-pulse {
+  animation: pulse-scale 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+/* =============================================
+   TOAST SLIDE-UP
+   ============================================= */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(100%) translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes toast-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(100%) translateY(16px);
+  }
+}
+.toast-enter {
+  animation: toast-in 0.38s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+.toast-exit {
+  animation: toast-out 0.28s ease-in forwards;
+}
+
+/* =============================================
+   BOTTOM SHEET / DRAWER TRANSITIONS
+   ============================================= */
+.transition-sheet {
+  transition: transform 0.45s cubic-bezier(0.32, 0.72, 0, 1),
+              opacity 0.45s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* =============================================
+   CUSTOM SCROLLBAR
+   ============================================= */
+::-webkit-scrollbar          { width: 5px; height: 5px; }
+::-webkit-scrollbar-track    { background: #FDE8EC; }
+::-webkit-scrollbar-thumb    { background: #EBB4BB; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #1C2340; }
+
+/* =============================================
+   OVERSCROLL CONTAIN FOR DRAWERS
+   ============================================= */
+.overscroll-contain {
+  overscroll-behavior: contain;
+}
+
+/* =============================================
+   HIDE SCROLLBAR (horizontal chips)
+   ============================================= */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* =============================================
+   PRODUCT CARD HOVER
+   ============================================= */
+.product-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.product-card:hover {
+  transform: translateY(-3px) scale(1.015);
+  box-shadow: 0 12px 40px rgba(28, 35, 64, 0.13);
+}
+.product-card:active {
+  transform: scale(0.98);
+}
+
+/* =============================================
+   CATEGORY TILE HOVER
+   ============================================= */
+.category-tile {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.category-tile:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 32px rgba(28, 35, 64, 0.15);
+}
+.category-tile:active {
+  transform: scale(0.97);
+}
+
+/* =============================================
+   BUTTON ACTIVE STATE
+   ============================================= */
+button:active, a:active {
+  opacity: 0.88;
+}
+
+/* =============================================
+   RANGE SLIDER
+   ============================================= */
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: #EBB4BB;
+  outline: none;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #1C2340;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(28, 35, 64, 0.3);
+}
+input[type=range]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #1C2340;
+  cursor: pointer;
+  border: none;
+}
+
+/* =============================================
+   ASPECT RATIO POLYFILL
+   ============================================= */
+.aspect-square {
+  aspect-ratio: 1 / 1;
+}
+
+/* =============================================
+   SELECTION COLOR
+   ============================================= */
+::selection {
+  background: #F9D7DA;
+  color: #1C2340;
+}
+
+/* =============================================
+   PREFERS REDUCED MOTION
+   ============================================= */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-delay: 0s !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-marquee {
+    animation: none !important;
+    white-space: normal !important;
+  }
+}
