@@ -1,4 +1,3 @@
-import React from 'react';
 import { LayoutDashboard, Package, ShoppingCart, Tag, Settings, LogOut } from 'lucide-react';
 
 const NAV_ITEMS = [

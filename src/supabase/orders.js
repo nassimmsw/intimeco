@@ -1,80 +1,14 @@
 import { supabase } from './client';
-import { decrementProductStock } from './products';
 
-async function generateOrderNumber() {
-    const year = new Date().getFullYear();
-
-    const { data, error } = await supabase
-        .from('orders')
-        .select('order_number')
-        .like('order_number', `IC-${year}-%`)
-        .order('created_at', { ascending: false })
-        .limit(1);
+export async function createOrder(orderData, cartItems) {
+    const { data, error } = await supabase.rpc('create_checkout_order', {
+        order_data: orderData,
+        cart_items: cartItems,
+    });
 
     if (error) throw error;
 
-    let sequence = 1;
-    if (data && data.length > 0) {
-        const lastNumber = data[0].order_number;
-        const parts = lastNumber.split('-');
-        sequence = parseInt(parts[2], 10) + 1;
-    }
-
-    return `IC-${year}-${sequence.toString().padStart(4, '0')}`;
-}
-
-export async function createOrder(orderData, cartItems) {
-    const orderNumber = await generateOrderNumber();
-
-    const { data: order, error: orderError } = await supabase
-        .from('orders')
-        .insert([
-            {
-                order_number: orderNumber,
-                customer_name: orderData.customerName,
-                customer_phone: orderData.customerPhone,
-                address: orderData.address,
-                wilaya: orderData.wilaya,
-                commune: orderData.commune,
-                payment_method: orderData.paymentMethod,
-                promo_code: orderData.promoCode || null,
-                discount_amount: orderData.discountAmount || 0,
-                subtotal: orderData.subtotal,
-                total: orderData.total,
-                notes: orderData.notes || null,
-            },
-        ])
-        .select()
-        .single();
-
-    if (orderError) throw orderError;
-
-    const orderItems = cartItems.map((item) => ({
-        order_id: order.id,
-        product_id: item.id,
-        product_name: item.name,
-        product_price: item.price,
-        size: item.selectedSize || null,
-        color: item.selectedColor || null,
-        quantity: item.qty,
-        subtotal: item.price * item.qty,
-    }));
-
-    const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItems);
-
-    if (itemsError) throw itemsError;
-
-    for (const item of cartItems) {
-        await decrementProductStock(item.id, item.qty);
-    }
-
-    if (orderData.promoCode) {
-        await incrementPromoCodeUsage(orderData.promoCode);
-    }
-
-    return order;
+    return Array.isArray(data) ? data[0] : data;
 }
 
 export async function fetchOrders({
@@ -182,17 +116,3 @@ export async function fetchTodayStats() {
     return { todayCount, todayRevenue, pendingCount };
 }
 
-async function incrementPromoCodeUsage(code) {
-    const { data } = await supabase
-        .from('promo_codes')
-        .select('used_count')
-        .eq('code', code.toUpperCase())
-        .single();
-
-    if (data) {
-        await supabase
-            .from('promo_codes')
-            .update({ used_count: data.used_count + 1 })
-            .eq('code', code.toUpperCase());
-    }
-}

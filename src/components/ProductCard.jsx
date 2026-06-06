@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Heart, ShoppingBag } from 'lucide-react';
 
 const COLOR_MAP = {
@@ -45,10 +45,6 @@ export default function ProductCard({ product, onAddToCart, onWishlist, isWishli
     e.stopPropagation();
     onAddToCart(product);
   }
-
-  const discount = product.originalPrice
-    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
-    : null;
 
   return (
     <article

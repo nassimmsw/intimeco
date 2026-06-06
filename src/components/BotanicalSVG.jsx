@@ -1,4 +1,3 @@
-import React from 'react';
 
 export default function BotanicalSVG({ className = '', opacity = 0.55, color = '#F5C6CB' }) {
   return (

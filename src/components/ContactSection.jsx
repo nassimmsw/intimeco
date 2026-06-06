@@ -1,4 +1,3 @@
-import React from 'react';
 import { Phone, MapPin } from 'lucide-react';
 
 function InstagramIcon({ size = 20, color = '#1C2340' }) {

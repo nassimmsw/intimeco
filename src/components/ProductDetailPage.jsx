@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { X, ChevronLeft, ChevronRight, Heart, ShoppingBag, Minus, Plus, ChevronDown } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { X, ChevronLeft, ChevronRight, Heart, Minus, Plus, ChevronDown } from 'lucide-react';
 
 const COLOR_MAP = {
   noir:  '#1C1C1C',
@@ -37,7 +37,7 @@ function Accordion({ title, children }) {
   );
 }
 
-export default function ProductDetailPage({ product, onClose, onAddToCart, onWishlist, isWishlisted, wishlist }) {
+export default function ProductDetailPage({ product, onClose, onAddToCart, onWishlist, wishlist }) {
   const [currentImage, setCurrentImage] = useState(0);
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(product?.colors[0] ?? null);

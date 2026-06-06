@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { SlidersHorizontal, X } from 'lucide-react';
 import ProductCard from './ProductCard';
 import { fetchProducts } from '../supabase/products';
@@ -202,7 +202,6 @@ export default function ProductCatalog({
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
   const [advFilters, setAdvFilters] = useState({ priceMax: 10000, sizes: [], colors: [] });
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   // Load products from Supabase
   useEffect(() => {
@@ -212,8 +211,6 @@ export default function ProductCatalog({
         setProducts(result.products);
       } catch (error) {
         console.error('Erreur chargement produits:', error);
-      } finally {
-        setLoading(false);
       }
     };
     loadProducts();

@@ -1,4 +1,3 @@
-import React from 'react';
 import BotanicalSVG from './BotanicalSVG';
 
 export default function PromoBanner() {

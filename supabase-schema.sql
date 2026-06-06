@@ -21,6 +21,21 @@ CREATE TABLE IF NOT EXISTS products (
   updated_at timestamptz DEFAULT now()
 );
 
+ALTER TABLE products DROP CONSTRAINT IF EXISTS products_category_check;
+ALTER TABLE products ADD CONSTRAINT products_category_check
+  CHECK (category = ANY (ARRAY[
+    'Soutien-gorge',
+    'Ensembles',
+    'Culottes',
+    'Pyjamas',
+    'Nuisettes',
+    'Corsets'
+  ]));
+
+ALTER TABLE products DROP CONSTRAINT IF EXISTS products_badge_check;
+ALTER TABLE products ADD CONSTRAINT products_badge_check
+  CHECK (badge IS NULL OR badge = ANY (ARRAY['new', 'promo']));
+
 -- =============================================
 -- TABLE: orders
 -- =============================================
@@ -42,6 +57,14 @@ CREATE TABLE IF NOT EXISTS orders (
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
 );
+
+ALTER TABLE orders DROP CONSTRAINT IF EXISTS orders_payment_method_check;
+ALTER TABLE orders ADD CONSTRAINT orders_payment_method_check
+  CHECK (payment_method = ANY (ARRAY['livraison', 'baridimob', 'ccp']));
+
+ALTER TABLE orders DROP CONSTRAINT IF EXISTS orders_status_check;
+ALTER TABLE orders ADD CONSTRAINT orders_status_check
+  CHECK (status = ANY (ARRAY['en_attente', 'confirme', 'en_preparation', 'expedie', 'livre', 'annule']));
 
 -- =============================================
 -- TABLE: order_items
@@ -181,36 +204,184 @@ CREATE INDEX IF NOT EXISTS idx_promo_codes_code ON promo_codes(code);
 -- =============================================
 -- STORAGE BUCKET: product-images
 -- =============================================
--- Ce bucket doit etre cree manuellement dans le dashboard Supabase:
--- 1. Aller dans Storage
--- 2. Creer un bucket "product-images"
--- 3. Le rendre public
--- 4. Configurer les politiques:
---    - Public access: ON
---    - Allowed mime types: image/jpeg, image/png, image/webp
---    - Max file size: 5MB
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+  'product-images',
+  'product-images',
+  true,
+  5242880,
+  ARRAY['image/jpeg', 'image/png', 'image/webp']
+)
+ON CONFLICT (id) DO UPDATE
+SET
+  public = true,
+  file_size_limit = EXCLUDED.file_size_limit,
+  allowed_mime_types = EXCLUDED.allowed_mime_types;
 
--- Politiques pour le bucket (a executer apres creation du bucket):
--- INSERT policy
-CREATE POLICY "Authenticated users can upload images"
-ON storage.objects FOR INSERT
-WITH CHECK (
-  bucket_id = 'product-images' 
-  AND auth.role() = 'authenticated'
-);
+DROP POLICY IF EXISTS "Authenticated users can upload images" ON storage.objects;
+DROP POLICY IF EXISTS "Public can view images" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can delete images" ON storage.objects;
+DROP POLICY IF EXISTS "Product images are publicly readable" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can upload product images" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can update product images" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can delete product images" ON storage.objects;
 
--- SELECT policy (public)
-CREATE POLICY "Public can view images"
-ON storage.objects FOR SELECT
+CREATE POLICY "Product images are publicly readable"
+ON storage.objects
+FOR SELECT
+TO public
 USING (bucket_id = 'product-images');
 
--- DELETE policy
-CREATE POLICY "Authenticated users can delete images"
-ON storage.objects FOR DELETE
-USING (
-  bucket_id = 'product-images' 
-  AND auth.role() = 'authenticated'
-);
+CREATE POLICY "Authenticated users can upload product images"
+ON storage.objects
+FOR INSERT
+TO authenticated
+WITH CHECK (bucket_id = 'product-images');
+
+CREATE POLICY "Authenticated users can update product images"
+ON storage.objects
+FOR UPDATE
+TO authenticated
+USING (bucket_id = 'product-images')
+WITH CHECK (bucket_id = 'product-images');
+
+CREATE POLICY "Authenticated users can delete product images"
+ON storage.objects
+FOR DELETE
+TO authenticated
+USING (bucket_id = 'product-images');
+
+-- =============================================
+-- RPC: public checkout order creation
+-- =============================================
+CREATE OR REPLACE FUNCTION public.create_checkout_order(order_data jsonb, cart_items jsonb)
+RETURNS TABLE (id uuid, order_number text)
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+DECLARE
+  new_order_id uuid := gen_random_uuid();
+  new_order_number text := 'IC-' || to_char(now(), 'YYYY') || '-' || upper(substr(replace(gen_random_uuid()::text, '-', ''), 1, 8));
+  item jsonb;
+  item_product_id uuid;
+  item_quantity integer;
+  promo text := nullif(order_data->>'promoCode', '');
+BEGIN
+  IF jsonb_typeof(cart_items) <> 'array' OR jsonb_array_length(cart_items) = 0 THEN
+    RAISE EXCEPTION 'cart_items must be a non-empty array';
+  END IF;
+
+  INSERT INTO public.orders (
+    id,
+    order_number,
+    customer_name,
+    customer_phone,
+    address,
+    wilaya,
+    commune,
+    payment_method,
+    promo_code,
+    discount_amount,
+    subtotal,
+    total,
+    notes
+  )
+  VALUES (
+    new_order_id,
+    new_order_number,
+    order_data->>'customerName',
+    order_data->>'customerPhone',
+    order_data->>'address',
+    order_data->>'wilaya',
+    order_data->>'commune',
+    order_data->>'paymentMethod',
+    promo,
+    COALESCE((order_data->>'discountAmount')::numeric, 0),
+    (order_data->>'subtotal')::numeric,
+    (order_data->>'total')::numeric,
+    nullif(order_data->>'notes', '')
+  );
+
+  FOR item IN SELECT value FROM jsonb_array_elements(cart_items)
+  LOOP
+    item_product_id := nullif(item->>'id', '')::uuid;
+    item_quantity := COALESCE((item->>'qty')::integer, 1);
+
+    INSERT INTO public.order_items (
+      order_id,
+      product_id,
+      product_name,
+      product_price,
+      size,
+      color,
+      quantity,
+      subtotal
+    )
+    VALUES (
+      new_order_id,
+      item_product_id,
+      item->>'name',
+      (item->>'price')::numeric,
+      nullif(item->>'selectedSize', ''),
+      nullif(item->>'selectedColor', ''),
+      item_quantity,
+      (item->>'price')::numeric * item_quantity
+    );
+
+  END LOOP;
+
+  RETURN QUERY SELECT new_order_id, new_order_number;
+END;
+$$;
+
+REVOKE ALL ON FUNCTION public.create_checkout_order(jsonb, jsonb) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.create_checkout_order(jsonb, jsonb) TO anon, authenticated;
+
+CREATE OR REPLACE FUNCTION public.handle_new_order()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+BEGIN
+  IF NEW.promo_code IS NOT NULL THEN
+    UPDATE public.promo_codes
+    SET used_count = COALESCE(used_count, 0) + 1
+    WHERE upper(code) = upper(NEW.promo_code);
+  END IF;
+
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS on_order_created ON public.orders;
+CREATE TRIGGER on_order_created
+AFTER INSERT ON public.orders
+FOR EACH ROW
+EXECUTE FUNCTION public.handle_new_order();
+
+CREATE OR REPLACE FUNCTION public.handle_new_order_item()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+BEGIN
+  UPDATE public.products
+  SET stock = GREATEST(0, COALESCE(stock, 0) - NEW.quantity),
+      updated_at = now()
+  WHERE id = NEW.product_id;
+
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS on_order_item_created ON public.order_items;
+CREATE TRIGGER on_order_item_created
+AFTER INSERT ON public.order_items
+FOR EACH ROW
+EXECUTE FUNCTION public.handle_new_order_item();
 
 -- =============================================
 -- FONCTION: mise a jour automatique updated_at

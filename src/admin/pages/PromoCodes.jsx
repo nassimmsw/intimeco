@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { fetchPromoCodes, createPromoCode, togglePromoCodeActive, deletePromoCode } from '../../supabase/promos';
 import ConfirmDialog from '../components/ConfirmDialog';
@@ -49,7 +49,7 @@ export default function PromoCodes() {
             });
             setShowForm(false);
             loadPromos();
-        } catch (error) {
+        } catch {
             alert('Erreur lors de la creation du code promo');
         }
     };
@@ -60,7 +60,7 @@ export default function PromoCodes() {
             setPromos((prev) =>
                 prev.map((p) => (p.id === id ? { ...p, is_active: !currentState } : p))
             );
-        } catch (error) {
+        } catch {
             alert('Erreur lors de la mise a jour');
         }
     };
@@ -71,7 +71,7 @@ export default function PromoCodes() {
             await deletePromoCode(deleteConfirm.id);
             setPromos((prev) => prev.filter((p) => p.id !== deleteConfirm.id));
             setDeleteConfirm(null);
-        } catch (error) {
+        } catch {
             alert('Erreur lors de la suppression');
         }
     };

@@ -1,4 +1,3 @@
-import React from 'react';
 
 /* Inline SVG logo that replicates the brand identity:
    - Pink background circle
@@ -7,7 +6,7 @@ import React from 'react';
    - "Lingerie pour elle" cursive arc text above
    - "Intime & Co" bold serif text below
 */
-export default function InTimeLogo({ size = 120, showText = false, className = '' }) {
+export default function InTimeLogo({ size = 120, className = '' }) {
   return (
     <svg
       width={size}

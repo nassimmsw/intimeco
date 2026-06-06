@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { X, Upload, Trash2 } from 'lucide-react';
 import { createProduct, updateProduct } from '../../supabase/products';
 import { uploadProductImage, deleteProductImage } from '../../supabase/storage';
@@ -33,7 +33,7 @@ export default function ProductForm({ product, onClose }) {
             const uploadPromises = files.map((file) => uploadProductImage(file));
             const urls = await Promise.all(uploadPromises);
             setFormData((prev) => ({ ...prev, images: [...prev.images, ...urls] }));
-        } catch (error) {
+        } catch {
             alert('Erreur lors du telechargement des images');
         } finally {
             setUploading(false);
@@ -47,7 +47,7 @@ export default function ProductForm({ product, onClose }) {
                 ...prev,
                 images: prev.images.filter((img) => img !== url),
             }));
-        } catch (error) {
+        } catch {
             alert('Erreur lors de la suppression de l\'image');
         }
     };

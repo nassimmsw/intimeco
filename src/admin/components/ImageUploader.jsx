@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Upload, X, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { Upload, Trash2 } from 'lucide-react';
 import { uploadProductImage, deleteProductImage } from '../../supabase/storage';
 
 export default function ImageUploader({ images = [], onChange }) {
@@ -14,7 +14,7 @@ export default function ImageUploader({ images = [], onChange }) {
             const uploadPromises = files.map((file) => uploadProductImage(file));
             const urls = await Promise.all(uploadPromises);
             onChange([...images, ...urls]);
-        } catch (error) {
+        } catch {
             alert('Erreur lors du telechargement des images');
         } finally {
             setUploading(false);
@@ -25,7 +25,7 @@ export default function ImageUploader({ images = [], onChange }) {
         try {
             await deleteProductImage(url);
             onChange(images.filter((img) => img !== url));
-        } catch (error) {
+        } catch {
             alert('Erreur lors de la suppression de l\'image');
         }
     };

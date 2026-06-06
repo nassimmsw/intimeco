@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Trash2, Minus, Plus, ShoppingBag } from 'lucide-react';
 
 export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, onRemove, onCheckout }) {

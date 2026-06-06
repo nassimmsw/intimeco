@@ -1,4 +1,3 @@
-import React from 'react';
 
 const STATUS_CONFIG = {
     en_attente: { label: 'En attente', color: '#F59E0B', bg: '#FEF3C7' },

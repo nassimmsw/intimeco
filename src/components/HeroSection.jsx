@@ -1,4 +1,3 @@
-import React from 'react';
 import InTimeLogo from './InTimeLogo';
 import BotanicalSVG from './BotanicalSVG';
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ShoppingCart, DollarSign, Clock, Package } from 'lucide-react';
 import { fetchTodayStats, fetchOrders } from '../../supabase/orders';
 import { fetchProducts } from '../../supabase/products';

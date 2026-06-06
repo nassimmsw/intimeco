@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Eye, Printer } from 'lucide-react';
 import { fetchOrders, fetchOrderById, updateOrderStatus, updateOrderNotes } from '../../supabase/orders';
 import OrderStatusBadge from '../components/OrderStatusBadge';
@@ -22,7 +22,7 @@ function OrderDetailModal({ order, onClose, onStatusChange, onNotesChange }) {
             await updateOrderStatus(order.id, newStatus);
             setStatus(newStatus);
             onStatusChange(order.id, newStatus);
-        } catch (error) {
+        } catch {
             alert('Erreur lors de la mise a jour du statut');
         }
     };
@@ -32,7 +32,7 @@ function OrderDetailModal({ order, onClose, onStatusChange, onNotesChange }) {
             await updateOrderNotes(order.id, notes);
             onNotesChange(order.id, notes);
             alert('Notes enregistrees');
-        } catch (error) {
+        } catch {
             alert('Erreur lors de la sauvegarde des notes');
         }
     };
@@ -318,7 +318,7 @@ export default function Orders() {
         try {
             const order = await fetchOrderById(orderId);
             setSelectedOrder(order);
-        } catch (error) {
+        } catch {
             alert('Erreur lors du chargement de la commande');
         }
     };

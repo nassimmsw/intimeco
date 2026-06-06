@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
 import { fetchProducts, toggleProductActive, deleteProduct } from '../../supabase/products';
 import ProductForm from './ProductForm';
@@ -53,7 +53,7 @@ export default function Products() {
             setProducts((prev) =>
                 prev.map((p) => (p.id === productId ? { ...p, is_active: !currentState } : p))
             );
-        } catch (error) {
+        } catch {
             alert('Erreur lors de la mise a jour');
         }
     };
@@ -64,7 +64,7 @@ export default function Products() {
             await deleteProduct(deleteConfirm.id);
             setProducts((prev) => prev.filter((p) => p.id !== deleteConfirm.id));
             setDeleteConfirm(null);
-        } catch (error) {
+        } catch {
             alert('Erreur lors de la suppression');
         }
     };

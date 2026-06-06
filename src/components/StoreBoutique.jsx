@@ -1,6 +1,4 @@
-import React from 'react';
 import { MapPin, Clock, ExternalLink } from 'lucide-react';
-import BotanicalSVG from './BotanicalSVG';
 
 const MAPS_URL = 'https://maps.app.goo.gl/eQraDcmneZppr5d26';
 const EMBED_URL = 'https://www.google.com/maps?q=36.4722,2.8277&z=16&output=embed';

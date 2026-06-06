@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import InTimeLogo from './InTimeLogo';
 
 function TikTokIcon({ size = 18, color = '#1C2340' }) {

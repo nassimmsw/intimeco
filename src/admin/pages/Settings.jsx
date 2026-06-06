@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { fetchSettings, bulkUpdateSettings } from '../../supabase/settings';
 
 export default function Settings() {
@@ -46,7 +46,7 @@ export default function Settings() {
         try {
             await bulkUpdateSettings(formData);
             alert('Parametres enregistres avec succes');
-        } catch (error) {
+        } catch {
             alert('Erreur lors de la sauvegarde des parametres');
         } finally {
             setSaving(false);

@@ -1,6 +1,4 @@
-import React from 'react';
 import { Menu, Search, ShoppingBag } from 'lucide-react';
-import InTimeLogo from './InTimeLogo';
 
 export default function Navbar({ cartCount, onMenuOpen, onCartOpen, onSearchOpen }) {
   return (

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ChevronLeft, ChevronDown } from 'lucide-react';
 import { createOrder } from '../supabase/orders';
 import { validatePromoCode } from '../supabase/promos';
@@ -87,7 +87,7 @@ export default function CheckoutPage({ cartItems, onBack, onConfirm }) {
             } else {
                 alert(result.message);
             }
-        } catch (error) {
+        } catch {
             alert('Erreur lors de la validation du code promo');
         }
     };

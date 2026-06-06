@@ -1,6 +1,5 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import './index.css';
-import { fetchProducts } from './supabase/products';
 import { fetchSettingByKey, subscribeToSettings } from './supabase/settings';
 
 import Navbar from './components/Navbar';
@@ -33,9 +32,7 @@ export default function App() {
   const [activeCategoryFilter, setActiveCategoryFilter] = useState(null);
 
   // Data state
-  const [productsData, setProductsData] = useState([]);
   const [announcementText, setAnnouncementText] = useState('Livraison gratuite des 3000 DZD d\'achat');
-  const [loading, setLoading] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [toasts, setToasts] = useState([]);
@@ -77,7 +74,6 @@ export default function App() {
   // Cart operations
   function addToCart(product, selectedSize, selectedColor, qty = 1) {
     setCartItems((prev) => {
-      const key = `${product.id}-${selectedSize}-${selectedColor}`;
       const existing = prev.find(
         (i) => i.id === product.id && i.selectedSize === selectedSize && i.selectedColor === selectedColor
       );
