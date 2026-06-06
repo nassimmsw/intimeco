@@ -1,6 +1,6 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import './index.css';
-import { fetchSettingByKey, subscribeToSettings } from './supabase/settings';
+import useStoreSettings from './hooks/useStoreSettings';
 
 import Navbar from './components/Navbar';
 import AnnouncementStrip from './components/AnnouncementStrip';
@@ -32,34 +32,10 @@ export default function App() {
   const [activeCategoryFilter, setActiveCategoryFilter] = useState(null);
 
   // Data state
-  const [announcementText, setAnnouncementText] = useState('Livraison gratuite des 3000 DZD d\'achat');
+  const storeSettings = useStoreSettings();
   const [cartItems, setCartItems] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [toasts, setToasts] = useState([]);
-
-  // Load products and settings in background
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const announcement = await fetchSettingByKey('announcement_text');
-        if (announcement) setAnnouncementText(announcement);
-      } catch (error) {
-        console.error('Erreur lors du chargement:', error);
-      }
-    };
-
-    loadData();
-
-    const unsubscribe = subscribeToSettings((payload) => {
-      if (payload.new.key === 'announcement_text') {
-        setAnnouncementText(payload.new.value);
-      }
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
 
   // Toast helper
   const addToast = useCallback((message) => {
@@ -166,6 +142,7 @@ export default function App() {
           cartItems={cartItems}
           onBack={() => setShowCheckout(false)}
           onConfirm={handleOrderConfirm}
+          settings={storeSettings}
         />
         <Toast toasts={toasts} onDismiss={dismissToast} />
       </>
@@ -183,7 +160,7 @@ export default function App() {
       />
 
       {/* Announcement strip */}
-      <AnnouncementStrip text={announcementText} />
+      <AnnouncementStrip text={storeSettings.announcement_text} />
 
       {/* Mobile menu */}
       <MobileMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
@@ -255,14 +232,14 @@ export default function App() {
         <BrandStory />
 
         {/* 7. Notre Boutique */}
-        <StoreBoutique />
+        <StoreBoutique settings={storeSettings} />
 
         {/* 8. Contact */}
-        <ContactSection />
+        <ContactSection settings={storeSettings} />
       </main>
 
       {/* Footer */}
-      <Footer />
+      <Footer settings={storeSettings} />
 
       {/* Toast notifications */}
       <Toast toasts={toasts} onDismiss={dismissToast} />

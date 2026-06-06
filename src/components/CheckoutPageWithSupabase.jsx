@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronDown } from 'lucide-react';
 import { createOrder } from '../supabase/orders';
 import { validatePromoCode } from '../supabase/promos';
 import { getProductImage } from '../utils/productImages';
+import { DEFAULT_STORE_SETTINGS, getNumberSetting } from '../hooks/useStoreSettings';
 
 const WILAYAS = [
     'Adrar', 'Chlef', 'Laghouat', 'Oum El Bouaghi', 'Batna', 'Bejaia', 'Biskra', 'Bechar',
@@ -54,7 +55,7 @@ function InputField({ label, id, type = 'text', placeholder, value, onChange, re
     );
 }
 
-export default function CheckoutPage({ cartItems, onBack, onConfirm }) {
+export default function CheckoutPage({ cartItems, onBack, onConfirm, settings = DEFAULT_STORE_SETTINGS }) {
     const [form, setForm] = useState({
         fullName: '',
         phone: '',
@@ -73,7 +74,9 @@ export default function CheckoutPage({ cartItems, onBack, onConfirm }) {
     const [summaryOpen, setSummaryOpen] = useState(false);
 
     const subtotal = cartItems.reduce((s, i) => s + i.price * i.qty, 0);
-    const deliveryFee = subtotal >= 3000 ? 0 : 500;
+    const deliveryBaseFee = getNumberSetting(settings, 'delivery_fee', 500);
+    const freeDeliveryThreshold = getNumberSetting(settings, 'free_delivery_threshold', 3000);
+    const deliveryFee = subtotal >= freeDeliveryThreshold ? 0 : deliveryBaseFee;
     const discount = promoApplied && promoValidation?.valid ? promoValidation.discountAmount : 0;
     const total = subtotal + deliveryFee - discount;
 
@@ -362,6 +365,11 @@ export default function CheckoutPage({ cartItems, onBack, onConfirm }) {
                                         <span>Livraison</span>
                                         <span>{deliveryFee === 0 ? 'Gratuite' : `${deliveryFee.toLocaleString('fr-DZ')} DZD`}</span>
                                     </div>
+                                    {freeDeliveryThreshold > 0 && subtotal < freeDeliveryThreshold && (
+                                        <p className="font-sans text-[#9CA3AF]" style={{ fontSize: '12px' }}>
+                                            Livraison gratuite des {freeDeliveryThreshold.toLocaleString('fr-DZ')} DZD d'achat
+                                        </p>
+                                    )}
                                     {promoApplied && discount > 0 && (
                                         <div className="flex justify-between font-sans text-[#E63946]" style={{ fontSize: '14px' }}>
                                             <span>Reduction ({form.promoCode})</span>

@@ -1,13 +1,18 @@
 import { MapPin, Clock, ExternalLink } from 'lucide-react';
+import { DEFAULT_STORE_SETTINGS } from '../hooks/useStoreSettings';
 
 const MAPS_URL = 'https://maps.app.goo.gl/eQraDcmneZppr5d26';
 const EMBED_URL = 'https://www.google.com/maps?q=36.4722,2.8277&z=16&output=embed';
 
-export default function StoreBoutique() {
+export default function StoreBoutique({ settings = DEFAULT_STORE_SETTINGS }) {
+  const storeName = settings.store_name || DEFAULT_STORE_SETTINGS.store_name;
+  const address = settings.store_address || DEFAULT_STORE_SETTINGS.store_address;
+  const hours = settings.store_hours || DEFAULT_STORE_SETTINGS.store_hours;
+
   function getDirections() {
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     if (isMobile) {
-      window.open(`geo:36.4722,2.8277?q=36.4722,2.8277(Intime+%26+Co)`, '_self');
+      window.open(`geo:36.4722,2.8277?q=36.4722,2.8277(${encodeURIComponent(storeName)})`, '_self');
     } else {
       window.open(MAPS_URL, '_blank', 'noopener,noreferrer');
     }
@@ -19,7 +24,6 @@ export default function StoreBoutique() {
       className="relative py-14 px-4 overflow-hidden"
       style={{ background: '#F5C6CB' }}
     >
-      {/* Botanical divider top */}
       <div className="absolute top-0 left-0 right-0 pointer-events-none overflow-hidden" aria-hidden="true">
         <svg viewBox="0 0 1440 40" preserveAspectRatio="none" className="w-full" style={{ height: '40px' }}>
           <path d="M0 40 Q360 0 720 20 Q1080 40 1440 10 L1440 0 L0 0 Z" fill="#FDE8EC" />
@@ -27,7 +31,6 @@ export default function StoreBoutique() {
       </div>
 
       <div className="max-w-screen-xl mx-auto pt-6">
-        {/* Title */}
         <div className="text-center mb-10">
           <h2
             className="font-serif text-[#1C2340]"
@@ -43,17 +46,14 @@ export default function StoreBoutique() {
           </p>
         </div>
 
-        {/* Two-column layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-          {/* Store info card */}
           <div className="bg-white rounded-2xl p-6 space-y-5" style={{ boxShadow: '0 4px 24px rgba(28,35,64,0.1)' }}>
-            {/* Name */}
             <div>
               <h3
                 className="font-serif text-[#1C2340]"
                 style={{ fontSize: '22px', fontWeight: 600 }}
               >
-                Intime &amp; Co
+                {storeName}
               </h3>
               <p
                 className="font-script text-[#EBB4BB] mt-0.5"
@@ -63,7 +63,6 @@ export default function StoreBoutique() {
               </p>
             </div>
 
-            {/* Address */}
             <div className="flex items-start gap-3">
               <div
                 className="flex-none flex items-center justify-center rounded-full bg-[#FDE8EC] mt-0.5"
@@ -76,12 +75,11 @@ export default function StoreBoutique() {
                   Adresse
                 </p>
                 <p className="font-sans text-[#5A6080]" style={{ fontSize: '14px' }}>
-                  Blida, Algerie
+                  {address}
                 </p>
               </div>
             </div>
 
-            {/* Hours */}
             <div className="flex items-start gap-3">
               <div
                 className="flex-none flex items-center justify-center rounded-full bg-[#FDE8EC] mt-0.5"
@@ -94,15 +92,11 @@ export default function StoreBoutique() {
                   Horaires d&apos;ouverture
                 </p>
                 <p className="font-sans text-[#5A6080]" style={{ fontSize: '14px' }}>
-                  Lun–Sam : 09h00 – 19h00
-                </p>
-                <p className="font-sans text-[#9CA3AF]" style={{ fontSize: '13px' }}>
-                  Dimanche : Ferme
+                  {hours}
                 </p>
               </div>
             </div>
 
-            {/* Get directions button */}
             <button
               id="store-directions-btn"
               onClick={getDirections}
@@ -114,7 +108,6 @@ export default function StoreBoutique() {
             </button>
           </div>
 
-          {/* Map */}
           <div className="flex flex-col gap-3">
             <div
               className="rounded-2xl overflow-hidden border-2 border-[#F9D7DA]"
@@ -124,7 +117,7 @@ export default function StoreBoutique() {
               }}
             >
               <iframe
-                title="Localisation Intime & Co — Blida, Algerie"
+                title={`Localisation ${storeName}`}
                 src={EMBED_URL}
                 width="100%"
                 height="100%"
@@ -135,7 +128,6 @@ export default function StoreBoutique() {
               />
             </div>
 
-            {/* View on Google Maps link (mobile) */}
             <a
               href={MAPS_URL}
               target="_blank"

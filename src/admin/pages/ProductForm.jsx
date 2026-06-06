@@ -161,18 +161,32 @@ export default function ProductForm({ product, onClose }) {
     return (
         <>
             <div className="fixed inset-0 z-50 bg-[#1C2340]/40" onClick={onClose} style={{ backdropFilter: 'blur(2px)' }} />
-            <div className="fixed inset-0 z-50 flex items-stretch sm:items-center justify-center p-0 sm:p-4 overflow-y-auto" data-product-form-scroll>
-                <div className="bg-white sm:rounded-2xl p-4 sm:p-6 w-full max-w-3xl shadow-xl sm:my-8 min-h-screen sm:min-h-0">
-                    <div className="sticky top-0 -mx-4 sm:mx-0 px-4 sm:px-0 py-3 sm:py-0 bg-white/95 sm:bg-white z-10 flex items-center justify-between mb-4 sm:mb-6 border-b sm:border-0 border-[#F9D7DA]">
-                        <h3 className="font-serif text-[#1C2340]" style={{ fontSize: '24px', fontWeight: 600 }}>
-                            {product ? 'Modifier le produit' : 'Ajouter un produit'}
-                        </h3>
-                        <button type="button" onClick={onClose} aria-label="Fermer">
+            <div className="fixed inset-0 z-50 flex items-stretch sm:items-center justify-center p-0 sm:p-4 overflow-hidden">
+                <div className="bg-white sm:rounded-2xl w-full max-w-3xl shadow-xl sm:my-8 min-h-screen sm:min-h-0 h-dvh sm:h-auto sm:max-h-[90vh] flex flex-col">
+                    <div className="flex-none px-4 sm:px-6 py-4 bg-white z-10 flex items-start justify-between gap-3 border-b border-[#F9D7DA]">
+                        <div>
+                            <h3 className="font-serif text-[#1C2340]" style={{ fontSize: '24px', fontWeight: 600 }}>
+                                {product ? 'Modifier le produit' : 'Ajouter un produit'}
+                            </h3>
+                            <p className="font-sans text-[#9CA3AF] mt-1" style={{ fontSize: '13px' }}>
+                                Remplissez les informations, ajoutez les images, puis enregistrez.
+                            </p>
+                        </div>
+                        <button type="button" onClick={onClose} aria-label="Fermer" className="p-1 flex-none">
                             <X size={24} color="#1C2340" strokeWidth={1.8} />
                         </button>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+                    <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-4 sm:px-6 pt-5 pb-28 sm:pb-6 space-y-6" data-product-form-scroll noValidate>
+                        <div className="rounded-xl border border-[#F9D7DA] bg-[#FDE8EC] px-4 py-3">
+                            <h4 className="font-sans font-semibold text-[#1C2340]" style={{ fontSize: '14px' }}>
+                                1. Informations principales
+                            </h4>
+                            <p className="font-sans text-[#5A6080] mt-1" style={{ fontSize: '12px' }}>
+                                Nom, categorie, stock et description du produit.
+                            </p>
+                        </div>
+
                         <div>
                             <label className="block font-sans font-semibold text-[#1C2340] mb-2" style={{ fontSize: '14px' }}>
                                 Nom du produit
@@ -185,6 +199,15 @@ export default function ProductForm({ product, onClose }) {
                                 className="w-full border border-[#EBB4BB] rounded-lg px-4 py-3 font-sans text-[#1C2340] outline-none focus:border-[#1C2340]"
                                 style={{ fontSize: '14px' }}
                             />
+                        </div>
+
+                        <div className="rounded-xl border border-[#F9D7DA] bg-[#FDE8EC] px-4 py-3">
+                            <h4 className="font-sans font-semibold text-[#1C2340]" style={{ fontSize: '14px' }}>
+                                2. Prix et presentation
+                            </h4>
+                            <p className="font-sans text-[#5A6080] mt-1" style={{ fontSize: '12px' }}>
+                                Prix actuel, ancien prix et badge visible sur le catalogue.
+                            </p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -271,60 +294,6 @@ export default function ProductForm({ product, onClose }) {
 
                         <div>
                             <label className="block font-sans font-semibold text-[#1C2340] mb-2" style={{ fontSize: '14px' }}>
-                                Tailles
-                            </label>
-                            <div className="flex flex-wrap gap-2">
-                                {SIZES.map((size) => {
-                                    const isSelected = formData.sizes.includes(size);
-                                    return (
-                                        <button
-                                            key={size}
-                                            type="button"
-                                            onClick={() => toggleArray('sizes', size)}
-                                            className="px-4 py-2 rounded-full border font-sans font-medium transition-all"
-                                            style={{
-                                                fontSize: '13px',
-                                                background: isSelected ? '#1C2340' : 'transparent',
-                                                color: isSelected ? 'white' : '#1C2340',
-                                                borderColor: isSelected ? '#1C2340' : '#EBB4BB',
-                                            }}
-                                        >
-                                            {size}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block font-sans font-semibold text-[#1C2340] mb-2" style={{ fontSize: '14px' }}>
-                                Couleurs
-                            </label>
-                            <div className="flex flex-wrap gap-2">
-                                {COLORS.map((color) => {
-                                    const isSelected = formData.colors.includes(color);
-                                    return (
-                                        <button
-                                            key={color}
-                                            type="button"
-                                            onClick={() => toggleArray('colors', color)}
-                                            className="px-4 py-2 rounded-full border font-sans font-medium transition-all"
-                                            style={{
-                                                fontSize: '13px',
-                                                background: isSelected ? '#1C2340' : 'transparent',
-                                                color: isSelected ? 'white' : '#1C2340',
-                                                borderColor: isSelected ? '#1C2340' : '#EBB4BB',
-                                            }}
-                                        >
-                                            {color}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block font-sans font-semibold text-[#1C2340] mb-2" style={{ fontSize: '14px' }}>
                                 Badge
                             </label>
                             <div className="flex gap-3">
@@ -348,6 +317,80 @@ export default function ProductForm({ product, onClose }) {
                                     );
                                 })}
                             </div>
+                        </div>
+
+                        <div className="rounded-xl border border-[#F9D7DA] bg-[#FDE8EC] px-4 py-3">
+                            <h4 className="font-sans font-semibold text-[#1C2340]" style={{ fontSize: '14px' }}>
+                                3. Variantes
+                            </h4>
+                            <p className="font-sans text-[#5A6080] mt-1" style={{ fontSize: '12px' }}>
+                                Selectionnez les tailles et couleurs disponibles.
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label className="block font-sans font-semibold text-[#1C2340] mb-2" style={{ fontSize: '14px' }}>
+                                    Tailles
+                                </label>
+                                <div className="flex flex-wrap gap-2">
+                                    {SIZES.map((size) => {
+                                        const isSelected = formData.sizes.includes(size);
+                                        return (
+                                            <button
+                                                key={size}
+                                                type="button"
+                                                onClick={() => toggleArray('sizes', size)}
+                                                className="px-4 py-2 rounded-full border font-sans font-medium transition-all"
+                                                style={{
+                                                    fontSize: '13px',
+                                                    background: isSelected ? '#1C2340' : 'transparent',
+                                                    color: isSelected ? 'white' : '#1C2340',
+                                                    borderColor: isSelected ? '#1C2340' : '#EBB4BB',
+                                                }}
+                                            >
+                                                {size}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block font-sans font-semibold text-[#1C2340] mb-2" style={{ fontSize: '14px' }}>
+                                    Couleurs
+                                </label>
+                                <div className="flex flex-wrap gap-2">
+                                    {COLORS.map((color) => {
+                                        const isSelected = formData.colors.includes(color);
+                                        return (
+                                            <button
+                                                key={color}
+                                                type="button"
+                                                onClick={() => toggleArray('colors', color)}
+                                                className="px-4 py-2 rounded-full border font-sans font-medium transition-all"
+                                                style={{
+                                                    fontSize: '13px',
+                                                    background: isSelected ? '#1C2340' : 'transparent',
+                                                    color: isSelected ? 'white' : '#1C2340',
+                                                    borderColor: isSelected ? '#1C2340' : '#EBB4BB',
+                                                }}
+                                            >
+                                                {color}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="rounded-xl border border-[#F9D7DA] bg-[#FDE8EC] px-4 py-3">
+                            <h4 className="font-sans font-semibold text-[#1C2340]" style={{ fontSize: '14px' }}>
+                                4. Images et statut
+                            </h4>
+                            <p className="font-sans text-[#5A6080] mt-1" style={{ fontSize: '12px' }}>
+                                La premiere image sera utilisee comme image principale.
+                            </p>
                         </div>
 
                         <div>
@@ -445,7 +488,7 @@ export default function ProductForm({ product, onClose }) {
                             )}
                         </div>
 
-                        <div className="sticky bottom-0 -mx-4 sm:mx-0 px-4 sm:px-0 py-3 sm:py-0 bg-white/95 sm:bg-white flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-4 border-t border-[#F9D7DA]">
+                        <div className="fixed sm:sticky bottom-0 left-0 right-0 sm:left-auto sm:right-auto -mx-0 sm:-mx-6 px-4 sm:px-6 py-3 bg-white/95 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 border-t border-[#F9D7DA]">
                             <button
                                 type="button"
                                 onClick={onClose}

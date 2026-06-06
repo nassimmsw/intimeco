@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import InTimeLogo from './InTimeLogo';
+import { DEFAULT_STORE_SETTINGS } from '../hooks/useStoreSettings';
 
 function TikTokIcon({ size = 18, color = '#1C2340' }) {
   return (
@@ -37,9 +38,12 @@ const NAV_LINKS = [
   { label: 'FAQ', href: '#contact' },
 ];
 
-export default function Footer() {
+export default function Footer({ settings = DEFAULT_STORE_SETTINGS }) {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const storeName = settings.store_name || DEFAULT_STORE_SETTINGS.store_name;
+  const address = settings.store_address || DEFAULT_STORE_SETTINGS.store_address;
+  const instagramUrl = settings.instagram_url || DEFAULT_STORE_SETTINGS.instagram_url;
 
   function handleSubscribe(e) {
     e.preventDefault();
@@ -60,7 +64,7 @@ export default function Footer() {
               <InTimeLogo size={52} />
               <div>
                 <p className="font-serif font-bold text-white" style={{ fontSize: '18px' }}>
-                  Intime &amp; Co
+                  {storeName}
                 </p>
                 <p className="font-script text-[#EBB4BB]" style={{ fontSize: '14px' }}>
                   Lingerie pour elle
@@ -71,7 +75,7 @@ export default function Footer() {
               className="font-sans text-white/60 leading-relaxed"
               style={{ fontSize: '13px', maxWidth: '240px' }}
             >
-              La lingerie fine algerienne, alliant elegance et confort pour la femme moderne. Boutique a Blida, livraison nationale.
+              La lingerie fine algerienne, alliant elegance et confort pour la femme moderne. Boutique a {address}, livraison nationale.
             </p>
           </div>
 
@@ -136,7 +140,7 @@ export default function Footer() {
             {/* Social icons */}
             <div className="flex items-center gap-3 mt-5">
               <a
-                href="https://www.instagram.com/inti.me15"
+                href={instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
@@ -189,7 +193,7 @@ export default function Footer() {
             className="font-sans text-white/40 text-center md:text-right"
             style={{ fontSize: '12px' }}
           >
-            &copy; {new Date().getFullYear()} Intime &amp; Co. Tous droits reserves. Blida, Algerie.
+            &copy; {new Date().getFullYear()} {storeName}. Tous droits reserves. {address}.
           </p>
         </div>
       </div>

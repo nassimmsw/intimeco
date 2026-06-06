@@ -1,4 +1,5 @@
 import { Phone, MapPin } from 'lucide-react';
+import { DEFAULT_STORE_SETTINGS, getPhoneHref } from '../hooks/useStoreSettings';
 
 function InstagramIcon({ size = 20, color = '#1C2340' }) {
   return (
@@ -12,7 +13,12 @@ function InstagramIcon({ size = 20, color = '#1C2340' }) {
 
 const MAPS_URL = 'https://maps.app.goo.gl/eQraDcmneZppr5d26';
 
-export default function ContactSection() {
+export default function ContactSection({ settings = DEFAULT_STORE_SETTINGS }) {
+  const instagramUrl = settings.instagram_url || DEFAULT_STORE_SETTINGS.instagram_url;
+  const phone = settings.store_phone || DEFAULT_STORE_SETTINGS.store_phone;
+  const address = settings.store_address || DEFAULT_STORE_SETTINGS.store_address;
+  const instagramLabel = instagramUrl.replace(/^https?:\/\/(www\.)?instagram\.com\//, '@').replace(/\/$/, '');
+
   return (
     <section id="contact" className="py-14 px-4 bg-white">
       <div className="max-w-screen-md mx-auto">
@@ -36,7 +42,7 @@ export default function ContactSection() {
         <div className="space-y-4">
           {/* Instagram */}
           <a
-            href="https://www.instagram.com/inti.me15"
+            href={instagramUrl}
             target="_blank"
             rel="noopener noreferrer"
             id="contact-instagram"
@@ -53,7 +59,7 @@ export default function ContactSection() {
                 Instagram
               </p>
               <p className="font-sans text-[#5A6080]" style={{ fontSize: '15px' }}>
-                @inti.me15
+                {instagramLabel}
               </p>
             </div>
             <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
@@ -65,7 +71,7 @@ export default function ContactSection() {
 
           {/* Phone */}
           <a
-            href="tel:+213555000000"
+            href={getPhoneHref(phone)}
             id="contact-phone"
             className="flex items-center gap-4 p-5 rounded-2xl bg-[#FDE8EC] hover:bg-[#F9D7DA] transition-colors duration-200 group"
           >
@@ -80,7 +86,7 @@ export default function ContactSection() {
                 Telephone
               </p>
               <p className="font-sans text-[#5A6080]" style={{ fontSize: '15px' }}>
-                +213 555 00 00 00
+                {phone}
               </p>
             </div>
             <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
@@ -109,7 +115,7 @@ export default function ContactSection() {
                 Boutique
               </p>
               <p className="font-sans text-[#5A6080]" style={{ fontSize: '15px' }}>
-                Blida, Algerie
+                {address}
               </p>
             </div>
             <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
