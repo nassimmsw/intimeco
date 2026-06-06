@@ -80,7 +80,7 @@ export async function updateProduct(id, updates) {
 export async function deleteProduct(id) {
     const { error } = await supabase
         .from('products')
-        .update({ is_active: false })
+        .delete()
         .eq('id', id);
 
     if (error) throw error;

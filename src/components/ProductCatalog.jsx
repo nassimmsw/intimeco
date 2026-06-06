@@ -23,8 +23,12 @@ const COLOR_MAP = {
 const ALL_SIZES = ['XS', 'S', 'M', 'L', 'XL', '85B', '90C', '95D'];
 const ALL_COLORS = Object.keys(COLOR_MAP);
 
-function FilterBottomSheet({ isOpen, onClose, filters, setFilters }) {
+function FilterBottomSheet({ isOpen, onClose, filters, setFilters, maxPrice }) {
   const [local, setLocal] = useState({ ...filters });
+
+  useEffect(() => {
+    if (isOpen) setLocal({ ...filters });
+  }, [filters, isOpen]);
 
   function apply() {
     setFilters(local);
@@ -32,7 +36,7 @@ function FilterBottomSheet({ isOpen, onClose, filters, setFilters }) {
   }
 
   function reset() {
-    const clean = { priceMax: 10000, sizes: [], colors: [] };
+    const clean = { priceMax: null, sizes: [], colors: [] };
     setLocal(clean);
     setFilters(clean);
   }
@@ -99,17 +103,17 @@ function FilterBottomSheet({ isOpen, onClose, filters, setFilters }) {
             <input
               type="range"
               min={0}
-              max={10000}
+              max={maxPrice}
               step={100}
-              value={local.priceMax}
+              value={local.priceMax ?? maxPrice}
               onChange={(e) => setLocal((p) => ({ ...p, priceMax: Number(e.target.value) }))}
               className="w-full"
-              aria-label={`Prix maximum : ${local.priceMax} DZD`}
+              aria-label={`Prix maximum : ${(local.priceMax ?? maxPrice).toLocaleString('fr-DZ')} DZD`}
             />
             <div className="flex justify-between mt-1">
               <span className="font-sans text-[#9CA3AF]" style={{ fontSize: '13px' }}>0 DZD</span>
               <span className="font-sans font-semibold text-[#1C2340]" style={{ fontSize: '13px' }}>
-                {local.priceMax.toLocaleString('fr-DZ')} DZD
+                {(local.priceMax ?? maxPrice).toLocaleString('fr-DZ')} DZD
               </span>
             </div>
           </div>
@@ -200,14 +204,14 @@ export default function ProductCatalog({
   const [activeCategory, setActiveCategory] = useState(initialCategory || 'Tout');
   const [activeSort, setActiveSort] = useState('new');
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
-  const [advFilters, setAdvFilters] = useState({ priceMax: 10000, sizes: [], colors: [] });
+  const [advFilters, setAdvFilters] = useState({ priceMax: null, sizes: [], colors: [] });
   const [products, setProducts] = useState([]);
 
   // Load products from Supabase
   useEffect(() => {
     const loadProducts = async () => {
       try {
-        const result = await fetchProducts({ onlyActive: true, limit: 100 });
+        const result = await fetchProducts({ onlyActive: true, limit: 1000 });
         setProducts(result.products);
       } catch (error) {
         console.error('Erreur chargement produits:', error);
@@ -230,7 +234,9 @@ export default function ProductCatalog({
     }
 
     // Advanced filters
-    list = list.filter((p) => p.price <= advFilters.priceMax);
+    if (advFilters.priceMax !== null && advFilters.priceMax !== undefined) {
+      list = list.filter((p) => p.price <= advFilters.priceMax);
+    }
     if (advFilters.sizes.length > 0) {
       list = list.filter((p) => advFilters.sizes.some((s) => p.sizes.includes(s)));
     }
@@ -250,7 +256,8 @@ export default function ProductCatalog({
     return list;
   }, [products, activeCategory, activeSort, advFilters]);
 
-  const hasActiveFilters = advFilters.sizes.length > 0 || advFilters.colors.length > 0 || advFilters.priceMax < 10000;
+  const maxCatalogPrice = Math.max(10000, ...products.map((p) => Number(p.price) || 0));
+  const hasActiveFilters = advFilters.sizes.length > 0 || advFilters.colors.length > 0 || advFilters.priceMax !== null;
 
   return (
     <section id="catalog" className="py-10 max-w-screen-xl mx-auto px-4">
@@ -352,7 +359,7 @@ export default function ProductCatalog({
             Aucun produit ne correspond aux filtres
           </p>
           <button
-            onClick={() => { setActiveCategory('Tout'); setAdvFilters({ priceMax: 10000, sizes: [], colors: [] }); }}
+            onClick={() => { setActiveCategory('Tout'); setAdvFilters({ priceMax: null, sizes: [], colors: [] }); }}
             className="mt-4 font-sans text-[#1C2340] underline"
             style={{ fontSize: '14px' }}
           >
@@ -380,6 +387,7 @@ export default function ProductCatalog({
         onClose={() => setFilterSheetOpen(false)}
         filters={advFilters}
         setFilters={setAdvFilters}
+        maxPrice={maxCatalogPrice}
       />
     </section>
   );

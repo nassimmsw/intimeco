@@ -323,8 +323,8 @@ export default function Products() {
                 isOpen={!!deleteConfirm}
                 onClose={() => setDeleteConfirm(null)}
                 onConfirm={handleDelete}
-                title="Supprimer le produit"
-                message={`Etes-vous sur de vouloir supprimer "${deleteConfirm?.name}" ?`}
+                title="Supprimer definitivement"
+                message={`Etes-vous sur de vouloir supprimer definitivement "${deleteConfirm?.name}" ? Cette action retire le produit de la base de donnees.`}
                 confirmText="Supprimer"
             />
         </div>
