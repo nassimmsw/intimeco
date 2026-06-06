@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
 import { fetchProducts, toggleProductActive, deleteProduct } from '../../supabase/products';
+import { getProductImage } from '../../utils/productImages';
 import ProductForm from './ProductForm';
 import ConfirmDialog from '../components/ConfirmDialog';
 
@@ -19,7 +20,7 @@ export default function Products() {
             const onlyActive = activeFilter === 'actif' ? true : activeFilter === 'inactif' ? false : null;
             const data = await fetchProducts({
                 category: categoryFilter || null,
-                onlyActive: onlyActive === null ? undefined : onlyActive,
+                onlyActive,
                 limit: 1000,
             });
 
@@ -195,7 +196,7 @@ export default function Products() {
                                     <tr key={product.id} className="border-b border-[#F9D7DA] last:border-0 hover:bg-[#FDE8EC] transition-colors">
                                         <td className="py-3 px-2">
                                             <img
-                                                src={product.images?.[0] || 'https://via.placeholder.com/60'}
+                                                src={getProductImage(product)}
                                                 alt={product.name}
                                                 className="w-12 h-12 object-cover rounded-lg"
                                             />

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ChevronLeft, ChevronDown } from 'lucide-react';
 import { createOrder } from '../supabase/orders';
 import { validatePromoCode } from '../supabase/promos';
+import { getProductImage } from '../utils/productImages';
 
 const WILAYAS = [
     'Adrar', 'Chlef', 'Laghouat', 'Oum El Bouaghi', 'Batna', 'Bejaia', 'Biskra', 'Bechar',
@@ -312,7 +313,7 @@ export default function CheckoutPage({ cartItems, onBack, onConfirm }) {
                                     {cartItems.map((item) => (
                                         <div key={`${item.id}-${item.selectedSize}-${item.selectedColor}`} className="flex gap-3">
                                             <img
-                                                src={item.images[0]}
+                                                src={getProductImage(item)}
                                                 alt={item.name}
                                                 className="w-16 h-16 rounded-lg object-cover flex-none"
                                             />

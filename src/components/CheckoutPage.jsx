@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ChevronLeft, ChevronDown } from 'lucide-react';
+import { getProductImage } from '../utils/productImages';
 
 const WILAYAS = [
   'Adrar','Chlef','Laghouat','Oum El Bouaghi','Batna','Béjaïa','Biskra','Béchar',
@@ -291,7 +292,7 @@ export default function CheckoutPage({ cartItems, onBack, onConfirm }) {
               {cartItems.map((item) => (
                 <div key={`${item.id}-${item.selectedSize}`} className="flex gap-3 items-center">
                   <img
-                    src={item.images[0]}
+                    src={getProductImage(item)}
                     alt={item.name}
                     className="rounded-lg object-cover flex-none"
                     style={{ width: '52px', height: '52px' }}

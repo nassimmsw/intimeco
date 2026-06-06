@@ -14,11 +14,11 @@ export default function ProductForm({ product, onClose }) {
         description: product?.description || '',
         price: product?.price || '',
         original_price: product?.original_price || '',
-        sizes: product?.sizes || [],
-        colors: product?.colors || [],
+        sizes: Array.isArray(product?.sizes) ? product.sizes : [],
+        colors: Array.isArray(product?.colors) ? product.colors : [],
         badge: product?.badge || '',
         stock: product?.stock || 0,
-        images: product?.images || [],
+        images: Array.isArray(product?.images) ? product.images : [],
         is_active: product?.is_active !== false,
     });
     const [uploading, setUploading] = useState(false);
@@ -33,8 +33,8 @@ export default function ProductForm({ product, onClose }) {
             const uploadPromises = files.map((file) => uploadProductImage(file));
             const urls = await Promise.all(uploadPromises);
             setFormData((prev) => ({ ...prev, images: [...prev.images, ...urls] }));
-        } catch {
-            alert('Erreur lors du telechargement des images');
+        } catch (error) {
+            alert(error?.message || 'Erreur lors du telechargement des images');
         } finally {
             setUploading(false);
         }
@@ -47,8 +47,8 @@ export default function ProductForm({ product, onClose }) {
                 ...prev,
                 images: prev.images.filter((img) => img !== url),
             }));
-        } catch {
-            alert('Erreur lors de la suppression de l\'image');
+        } catch (error) {
+            alert(error?.message || 'Erreur lors de la suppression de l\'image');
         }
     };
 
@@ -79,6 +79,9 @@ export default function ProductForm({ product, onClose }) {
                 price: parseFloat(formData.price),
                 original_price: formData.original_price ? parseFloat(formData.original_price) : null,
                 stock: parseInt(formData.stock, 10),
+                sizes: Array.isArray(formData.sizes) ? formData.sizes : [],
+                colors: Array.isArray(formData.colors) ? formData.colors : [],
+                images: Array.isArray(formData.images) ? formData.images : [],
                 badge: formData.badge || null,
             };
 
@@ -91,7 +94,7 @@ export default function ProductForm({ product, onClose }) {
             onClose();
         } catch (error) {
             console.error('Erreur lors de la sauvegarde:', error);
-            alert('Erreur lors de la sauvegarde du produit');
+            alert(error?.message || 'Erreur lors de la sauvegarde du produit');
         } finally {
             setSaving(false);
         }

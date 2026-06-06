@@ -16,8 +16,8 @@ export async function fetchProducts({
         .from('products')
         .select('*', { count: 'exact' });
 
-    if (onlyActive) {
-        query = query.eq('is_active', true);
+    if (onlyActive !== null && onlyActive !== undefined) {
+        query = query.eq('is_active', onlyActive);
     }
 
     if (category && category !== 'Tout') {

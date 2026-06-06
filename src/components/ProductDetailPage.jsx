@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight, Heart, Minus, Plus, ChevronDown } from 'lucide-react';
+import { getProductImages } from '../utils/productImages';
 
 const COLOR_MAP = {
   noir:  '#1C1C1C',
@@ -40,7 +41,7 @@ function Accordion({ title, children }) {
 export default function ProductDetailPage({ product, onClose, onAddToCart, onWishlist, wishlist }) {
   const [currentImage, setCurrentImage] = useState(0);
   const [selectedSize, setSelectedSize] = useState(null);
-  const [selectedColor, setSelectedColor] = useState(product?.colors[0] ?? null);
+  const [selectedColor, setSelectedColor] = useState(product?.colors?.[0] ?? null);
   const [qty, setQty] = useState(1);
   const [heartPulsing, setHeartPulsing] = useState(false);
   const [showStickyBar, setShowStickyBar] = useState(false);
@@ -50,7 +51,7 @@ export default function ProductDetailPage({ product, onClose, onAddToCart, onWis
     if (!product) return;
     setCurrentImage(0);
     setSelectedSize(null);
-    setSelectedColor(product.colors[0]);
+    setSelectedColor(product.colors?.[0] ?? null);
     setQty(1);
   }, [product]);
 
@@ -72,6 +73,10 @@ export default function ProductDetailPage({ product, onClose, onAddToCart, onWis
   }, [product]);
 
   if (!product) return null;
+
+  const productImages = getProductImages(product);
+  const productSizes = Array.isArray(product.sizes) ? product.sizes : [];
+  const productColors = Array.isArray(product.colors) ? product.colors : [];
 
   function handleWishlist() {
     setHeartPulsing(true);
@@ -117,24 +122,24 @@ export default function ProductDetailPage({ product, onClose, onAddToCart, onWis
         {/* Image carousel */}
         <div className="relative bg-[#FDE8EC] flex-none" style={{ minHeight: '320px' }}>
           <img
-            src={product.images[currentImage]}
+            src={productImages[currentImage]}
             alt={`${product.name} — vue ${currentImage + 1}`}
             className="w-full object-cover"
             style={{ height: '340px' }}
           />
 
           {/* Arrow buttons */}
-          {product.images.length > 1 && (
+          {productImages.length > 1 && (
             <>
               <button
-                onClick={() => setCurrentImage((i) => (i === 0 ? product.images.length - 1 : i - 1))}
+                onClick={() => setCurrentImage((i) => (i === 0 ? productImages.length - 1 : i - 1))}
                 aria-label="Image precedente"
                 className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-white/80"
               >
                 <ChevronLeft size={18} color="#1C2340" strokeWidth={1.8} />
               </button>
               <button
-                onClick={() => setCurrentImage((i) => (i === product.images.length - 1 ? 0 : i + 1))}
+                onClick={() => setCurrentImage((i) => (i === productImages.length - 1 ? 0 : i + 1))}
                 aria-label="Image suivante"
                 className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-white/80"
               >
@@ -145,7 +150,7 @@ export default function ProductDetailPage({ product, onClose, onAddToCart, onWis
 
           {/* Dot indicators */}
           <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-            {product.images.map((_, i) => (
+            {productImages.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setCurrentImage(i)}
@@ -210,7 +215,7 @@ export default function ProductDetailPage({ product, onClose, onAddToCart, onWis
               Taille{selectedSize && <span className="font-normal text-[#9CA3AF] ml-2">{selectedSize}</span>}
             </p>
             <div className="flex flex-wrap gap-2">
-              {product.sizes.map((s) => (
+              {productSizes.map((s) => (
                 <button
                   key={s}
                   onClick={() => setSelectedSize(s)}
@@ -237,7 +242,7 @@ export default function ProductDetailPage({ product, onClose, onAddToCart, onWis
               Couleur{selectedColor && <span className="font-normal text-[#9CA3AF] ml-2 capitalize">{selectedColor}</span>}
             </p>
             <div className="flex gap-3">
-              {product.colors.map((c) => (
+              {productColors.map((c) => (
                 <button
                   key={c}
                   onClick={() => setSelectedColor(c)}

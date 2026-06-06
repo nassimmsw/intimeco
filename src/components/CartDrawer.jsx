@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X, Trash2, Minus, Plus, ShoppingBag } from 'lucide-react';
+import { getProductImage } from '../utils/productImages';
 
 export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, onRemove, onCheckout }) {
   const [promoCode, setPromoCode] = useState('');
@@ -103,7 +104,7 @@ export default function CartDrawer({ isOpen, onClose, cartItems, onUpdateQty, on
               >
                 {/* Thumbnail */}
                 <img
-                  src={item.images[0]}
+                  src={getProductImage(item)}
                   alt={item.name}
                   className="rounded-lg object-cover flex-none"
                   style={{ width: '72px', height: '72px' }}
