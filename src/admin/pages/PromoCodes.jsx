@@ -8,6 +8,7 @@ export default function PromoCodes() {
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [deleteConfirm, setDeleteConfirm] = useState(null);
+    const [formError, setFormError] = useState('');
 
     const [formData, setFormData] = useState({
         code: '',
@@ -36,6 +37,7 @@ export default function PromoCodes() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setFormError('');
         try {
             await createPromoCode(formData);
             setFormData({
@@ -49,8 +51,8 @@ export default function PromoCodes() {
             });
             setShowForm(false);
             loadPromos();
-        } catch {
-            alert('Erreur lors de la creation du code promo');
+        } catch (error) {
+            setFormError(error?.message || 'Erreur lors de la creation du code promo');
         }
     };
 
@@ -76,15 +78,30 @@ export default function PromoCodes() {
         }
     };
 
+    const PromoActiveToggle = ({ promo }) => (
+        <button
+            onClick={() => handleToggleActive(promo.id, promo.is_active)}
+            className={`w-12 h-6 rounded-full transition-colors ${promo.is_active ? 'bg-[#10B981]' : 'bg-[#9CA3AF]'
+                }`}
+            aria-label={promo.is_active ? 'Desactiver le code promo' : 'Activer le code promo'}
+            aria-pressed={promo.is_active}
+        >
+            <span
+                className={`block w-5 h-5 bg-white rounded-full transition-transform ${promo.is_active ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+            />
+        </button>
+    );
+
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <h2 className="font-serif text-[#1C2340]" style={{ fontSize: '28px', fontWeight: 600 }}>
                     Codes promo
                 </h2>
                 <button
                     onClick={() => setShowForm(!showForm)}
-                    className="flex items-center gap-2 px-5 py-3 bg-[#1C2340] text-white font-sans font-semibold rounded-full hover:bg-[#2D375F] transition-colors"
+                    className="flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-3 bg-[#1C2340] text-white font-sans font-semibold rounded-full hover:bg-[#2D375F] transition-colors"
                     style={{ fontSize: '14px' }}
                 >
                     <Plus size={18} strokeWidth={1.8} />
@@ -203,7 +220,13 @@ export default function PromoCodes() {
                             </label>
                         </div>
 
-                        <div className="flex gap-3">
+                        {formError && (
+                            <p className="font-sans text-[#E63946]" style={{ fontSize: '13px' }}>
+                                {formError}
+                            </p>
+                        )}
+
+                        <div className="flex flex-col sm:flex-row gap-3">
                             <button
                                 type="button"
                                 onClick={() => setShowForm(false)}
@@ -230,7 +253,57 @@ export default function PromoCodes() {
                 ) : promos.length === 0 ? (
                     <p className="font-sans text-[#9CA3AF]">Aucun code promo</p>
                 ) : (
-                    <div className="overflow-x-auto">
+                    <>
+                    <div className="md:hidden space-y-3">
+                        {promos.map((promo) => (
+                            <article key={promo.id} className="border border-[#F9D7DA] rounded-xl p-4 bg-white">
+                                <div className="flex items-start justify-between gap-3">
+                                    <div>
+                                        <h3 className="font-sans font-semibold text-[#1C2340]" style={{ fontSize: '16px' }}>
+                                            {promo.code}
+                                        </h3>
+                                        <p className="font-sans text-[#5A6080]" style={{ fontSize: '13px' }}>
+                                            {promo.discount_type === 'percent'
+                                                ? `${promo.discount_value}%`
+                                                : `${parseFloat(promo.discount_value).toLocaleString('fr-DZ')} DZD`}
+                                        </p>
+                                    </div>
+                                    <button
+                                        onClick={() => setDeleteConfirm(promo)}
+                                        className="p-2 rounded-full hover:bg-[#FEE2E2] transition-colors"
+                                        aria-label="Supprimer"
+                                    >
+                                        <Trash2 size={16} color="#E63946" strokeWidth={1.8} />
+                                    </button>
+                                </div>
+                                <div className="grid grid-cols-2 gap-3 mt-4">
+                                    <div>
+                                        <p className="font-sans text-[#9CA3AF]" style={{ fontSize: '12px' }}>Minimum</p>
+                                        <p className="font-sans text-[#5A6080]" style={{ fontSize: '14px' }}>
+                                            {parseFloat(promo.min_order).toLocaleString('fr-DZ')} DZD
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="font-sans text-[#9CA3AF]" style={{ fontSize: '12px' }}>Utilisations</p>
+                                        <p className="font-sans text-[#5A6080]" style={{ fontSize: '14px' }}>
+                                            {promo.used_count} / {promo.max_uses || 'illimite'}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="font-sans text-[#9CA3AF]" style={{ fontSize: '12px' }}>Expiration</p>
+                                        <p className="font-sans text-[#5A6080]" style={{ fontSize: '14px' }}>
+                                            {promo.expires_at ? new Date(promo.expires_at).toLocaleDateString('fr-FR') : 'Aucune'}
+                                        </p>
+                                    </div>
+                                    <div className="flex items-end justify-end">
+                                        <PromoActiveToggle promo={promo} />
+                                    </div>
+                                </div>
+                            </article>
+                        ))}
+                    </div>
+
+                    <div className="hidden md:block overflow-x-auto">
                         <table className="w-full">
                             <thead>
                                 <tr className="border-b border-[#F9D7DA]">
@@ -286,16 +359,7 @@ export default function PromoCodes() {
                                                 : 'Aucune'}
                                         </td>
                                         <td className="text-center py-3 px-2">
-                                            <button
-                                                onClick={() => handleToggleActive(promo.id, promo.is_active)}
-                                                className={`w-12 h-6 rounded-full transition-colors ${promo.is_active ? 'bg-[#10B981]' : 'bg-[#9CA3AF]'
-                                                    }`}
-                                            >
-                                                <span
-                                                    className={`block w-5 h-5 bg-white rounded-full transition-transform ${promo.is_active ? 'translate-x-6' : 'translate-x-1'
-                                                        }`}
-                                                />
-                                            </button>
+                                            <PromoActiveToggle promo={promo} />
                                         </td>
                                         <td className="text-center py-3 px-2">
                                             <button
@@ -311,6 +375,7 @@ export default function PromoCodes() {
                             </tbody>
                         </table>
                     </div>
+                    </>
                 )}
             </div>
 

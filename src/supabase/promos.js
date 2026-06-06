@@ -48,15 +48,35 @@ export async function fetchPromoCodes() {
 }
 
 export async function createPromoCode(promo) {
+    const discountValue = Number.parseFloat(promo.discountValue);
+    const minOrder = promo.minOrder === '' ? 0 : Number.parseFloat(promo.minOrder);
+    const maxUses = promo.maxUses === '' ? null : Number.parseInt(promo.maxUses, 10);
+
+    if (!promo.code?.trim()) {
+        throw new Error('Le code promo est obligatoire');
+    }
+
+    if (!Number.isFinite(discountValue) || discountValue <= 0) {
+        throw new Error('La valeur de reduction doit etre superieure a 0');
+    }
+
+    if (!Number.isFinite(minOrder) || minOrder < 0) {
+        throw new Error('La commande minimum doit etre valide');
+    }
+
+    if (maxUses !== null && (!Number.isInteger(maxUses) || maxUses < 1)) {
+        throw new Error('Le nombre maximum d utilisations doit etre valide');
+    }
+
     const { data, error } = await supabase
         .from('promo_codes')
         .insert([
             {
-                code: promo.code.toUpperCase(),
+                code: promo.code.trim().toUpperCase(),
                 discount_type: promo.discountType,
-                discount_value: promo.discountValue,
-                min_order: promo.minOrder || 0,
-                max_uses: promo.maxUses || null,
+                discount_value: discountValue,
+                min_order: minOrder,
+                max_uses: maxUses,
                 expires_at: promo.expiresAt || null,
                 is_active: promo.isActive !== false,
             },

@@ -161,9 +161,9 @@ export default function ProductForm({ product, onClose }) {
     return (
         <>
             <div className="fixed inset-0 z-50 bg-[#1C2340]/40" onClick={onClose} style={{ backdropFilter: 'blur(2px)' }} />
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto" data-product-form-scroll>
-                <div className="bg-white rounded-2xl p-6 w-full max-w-3xl shadow-xl my-8">
-                    <div className="flex items-center justify-between mb-6">
+            <div className="fixed inset-0 z-50 flex items-stretch sm:items-center justify-center p-0 sm:p-4 overflow-y-auto" data-product-form-scroll>
+                <div className="bg-white sm:rounded-2xl p-4 sm:p-6 w-full max-w-3xl shadow-xl sm:my-8 min-h-screen sm:min-h-0">
+                    <div className="sticky top-0 -mx-4 sm:mx-0 px-4 sm:px-0 py-3 sm:py-0 bg-white/95 sm:bg-white z-10 flex items-center justify-between mb-4 sm:mb-6 border-b sm:border-0 border-[#F9D7DA]">
                         <h3 className="font-serif text-[#1C2340]" style={{ fontSize: '24px', fontWeight: 600 }}>
                             {product ? 'Modifier le produit' : 'Ajouter un produit'}
                         </h3>
@@ -373,7 +373,7 @@ export default function ProductForm({ product, onClose }) {
                             </div>
 
                             {formData.images.length > 0 && (
-                                <div className="grid grid-cols-3 gap-3 mt-4">
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4">
                                     {formData.images.map((url, index) => (
                                         <div key={url} className="relative group">
                                             <img
@@ -381,7 +381,7 @@ export default function ProductForm({ product, onClose }) {
                                                 alt={`Produit ${index + 1}`}
                                                 className="w-full h-32 object-cover rounded-lg"
                                             />
-                                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
+                                            <div className="absolute inset-0 bg-black/45 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-2">
                                                 {index > 0 && (
                                                     <button
                                                         type="button"
@@ -445,7 +445,7 @@ export default function ProductForm({ product, onClose }) {
                             )}
                         </div>
 
-                        <div className="flex items-center gap-3 pt-4 border-t border-[#F9D7DA]">
+                        <div className="sticky bottom-0 -mx-4 sm:mx-0 px-4 sm:px-0 py-3 sm:py-0 bg-white/95 sm:bg-white flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-4 border-t border-[#F9D7DA]">
                             <button
                                 type="button"
                                 onClick={onClose}

@@ -54,7 +54,7 @@ export default function AdminApp() {
                 userEmail={session.user.email}
                 onLogout={handleLogout}
             />
-            <main className="max-w-screen-xl mx-auto px-4 py-6">
+            <main className="max-w-screen-xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
                 {currentPage === 'dashboard' && <Dashboard />}
                 {currentPage === 'orders' && <Orders />}
                 {currentPage === 'products' && <Products />}

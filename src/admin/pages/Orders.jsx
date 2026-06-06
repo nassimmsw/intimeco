@@ -39,6 +39,10 @@ function OrderDetailModal({ order, onClose, onStatusChange, onNotesChange }) {
 
     const handlePrint = () => {
         const printWindow = window.open('', '_blank');
+        if (!printWindow) {
+            alert('La fenetre d impression a ete bloquee par le navigateur');
+            return;
+        }
         printWindow.document.write(`
       <html>
         <head>
@@ -111,16 +115,16 @@ function OrderDetailModal({ order, onClose, onStatusChange, onNotesChange }) {
     return (
         <>
             <div className="fixed inset-0 z-50 bg-[#1C2340]/40" onClick={onClose} style={{ backdropFilter: 'blur(2px)' }} />
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
-                <div className="bg-white rounded-2xl p-6 w-full max-w-3xl shadow-xl my-8">
-                    <div className="flex items-center justify-between mb-6">
+            <div className="fixed inset-0 z-50 flex items-stretch sm:items-center justify-center p-0 sm:p-4 overflow-y-auto">
+                <div className="bg-white sm:rounded-2xl p-4 sm:p-6 w-full max-w-3xl shadow-xl sm:my-8 min-h-screen sm:min-h-0">
+                    <div className="sticky top-0 -mx-4 sm:mx-0 px-4 sm:px-0 py-3 sm:py-0 bg-white/95 sm:bg-white z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6 border-b sm:border-0 border-[#F9D7DA]">
                         <h3 className="font-serif text-[#1C2340]" style={{ fontSize: '24px', fontWeight: 600 }}>
                             Commande {order.order_number}
                         </h3>
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={handlePrint}
-                                className="flex items-center gap-2 px-4 py-2 rounded-full border border-[#EBB4BB] font-sans text-[#1C2340] hover:bg-[#FDE8EC] transition-colors"
+                                className="flex items-center justify-center gap-2 flex-1 sm:flex-none px-4 py-2 rounded-full border border-[#EBB4BB] font-sans text-[#1C2340] hover:bg-[#FDE8EC] transition-colors"
                                 style={{ fontSize: '14px' }}
                             >
                                 <Printer size={16} strokeWidth={1.8} />
@@ -348,7 +352,7 @@ export default function Orders() {
 
             <div className="bg-white rounded-xl p-6 shadow-sm border border-[#F9D7DA]">
                 <form onSubmit={handleSearch} className="space-y-4">
-                    <div className="flex gap-3">
+                    <div className="flex flex-col sm:flex-row gap-3">
                         <div className="flex-1 relative">
                             <Search
                                 className="absolute left-3 top-1/2 transform -translate-y-1/2"
@@ -367,14 +371,14 @@ export default function Orders() {
                         </div>
                         <button
                             type="submit"
-                            className="px-6 py-2 bg-[#1C2340] text-white font-sans font-semibold rounded-full hover:bg-[#2D375F] transition-colors"
+                            className="px-6 py-3 sm:py-2 bg-[#1C2340] text-white font-sans font-semibold rounded-full hover:bg-[#2D375F] transition-colors"
                             style={{ fontSize: '14px' }}
                         >
                             Rechercher
                         </button>
                     </div>
 
-                    <div className="flex gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <select
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
@@ -413,7 +417,58 @@ export default function Orders() {
                 ) : orders.length === 0 ? (
                     <p className="font-sans text-[#9CA3AF]">Aucune commande trouvee</p>
                 ) : (
-                    <div className="overflow-x-auto">
+                    <>
+                    <div className="md:hidden space-y-3">
+                        {orders.map((order) => (
+                            <article key={order.id} className="border border-[#F9D7DA] rounded-xl p-4 bg-white">
+                                <div className="flex items-start justify-between gap-3">
+                                    <div className="min-w-0">
+                                        <p className="font-sans font-semibold text-[#1C2340]" style={{ fontSize: '15px' }}>
+                                            {order.order_number}
+                                        </p>
+                                        <p className="font-sans text-[#5A6080] truncate" style={{ fontSize: '13px' }}>
+                                            {order.customer_name} - {order.customer_phone}
+                                        </p>
+                                    </div>
+                                    <OrderStatusBadge status={order.status} />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3 mt-4">
+                                    <div>
+                                        <p className="font-sans text-[#9CA3AF]" style={{ fontSize: '12px' }}>Total</p>
+                                        <p className="font-sans font-semibold text-[#1C2340]" style={{ fontSize: '14px' }}>
+                                            {parseFloat(order.total).toLocaleString('fr-DZ')} DZD
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p className="font-sans text-[#9CA3AF]" style={{ fontSize: '12px' }}>Wilaya</p>
+                                        <p className="font-sans text-[#5A6080]" style={{ fontSize: '14px' }}>{order.wilaya}</p>
+                                    </div>
+                                    <div>
+                                        <p className="font-sans text-[#9CA3AF]" style={{ fontSize: '12px' }}>Paiement</p>
+                                        <p className="font-sans text-[#5A6080]" style={{ fontSize: '14px' }}>{order.payment_method}</p>
+                                    </div>
+                                    <div>
+                                        <p className="font-sans text-[#9CA3AF]" style={{ fontSize: '12px' }}>Date</p>
+                                        <p className="font-sans text-[#5A6080]" style={{ fontSize: '14px' }}>
+                                            {new Date(order.created_at).toLocaleDateString('fr-FR')}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <button
+                                    onClick={() => handleViewOrder(order.id)}
+                                    className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full border border-[#EBB4BB] font-sans text-[#1C2340] hover:bg-[#FDE8EC] transition-colors"
+                                    style={{ fontSize: '14px' }}
+                                >
+                                    <Eye size={16} strokeWidth={1.8} />
+                                    Voir la commande
+                                </button>
+                            </article>
+                        ))}
+                    </div>
+
+                    <div className="hidden md:block overflow-x-auto">
                         <table className="w-full">
                             <thead>
                                 <tr className="border-b border-[#F9D7DA]">
@@ -488,6 +543,7 @@ export default function Orders() {
                             </tbody>
                         </table>
                     </div>
+                    </>
                 )}
             </div>
 

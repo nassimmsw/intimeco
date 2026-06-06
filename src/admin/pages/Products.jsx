@@ -81,15 +81,49 @@ export default function Products() {
         loadProducts();
     };
 
+    const ProductActions = ({ product }) => (
+        <div className="flex items-center justify-end gap-2">
+            <button
+                onClick={() => handleEdit(product)}
+                className="p-2 rounded-full hover:bg-[#DBEAFE] transition-colors"
+                aria-label="Modifier"
+            >
+                <Edit size={16} color="#3B82F6" strokeWidth={1.8} />
+            </button>
+            <button
+                onClick={() => setDeleteConfirm(product)}
+                className="p-2 rounded-full hover:bg-[#FEE2E2] transition-colors"
+                aria-label="Supprimer"
+            >
+                <Trash2 size={16} color="#E63946" strokeWidth={1.8} />
+            </button>
+        </div>
+    );
+
+    const ProductActiveToggle = ({ product }) => (
+        <button
+            onClick={() => handleToggleActive(product.id, product.is_active)}
+            className={`w-12 h-6 rounded-full transition-colors ${product.is_active ? 'bg-[#10B981]' : 'bg-[#9CA3AF]'
+                }`}
+            aria-label={product.is_active ? 'Desactiver le produit' : 'Activer le produit'}
+            aria-pressed={product.is_active}
+        >
+            <span
+                className={`block w-5 h-5 bg-white rounded-full transition-transform ${product.is_active ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+            />
+        </button>
+    );
+
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <h2 className="font-serif text-[#1C2340]" style={{ fontSize: '28px', fontWeight: 600 }}>
                     Produits
                 </h2>
                 <button
                     onClick={() => setShowForm(true)}
-                    className="flex items-center gap-2 px-5 py-3 bg-[#1C2340] text-white font-sans font-semibold rounded-full hover:bg-[#2D375F] transition-colors"
+                    className="flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-3 bg-[#1C2340] text-white font-sans font-semibold rounded-full hover:bg-[#2D375F] transition-colors"
                     style={{ fontSize: '14px' }}
                 >
                     <Plus size={18} strokeWidth={1.8} />
@@ -99,7 +133,7 @@ export default function Products() {
 
             <div className="bg-white rounded-xl p-6 shadow-sm border border-[#F9D7DA]">
                 <form onSubmit={handleSearch} className="space-y-4">
-                    <div className="flex gap-3">
+                    <div className="flex flex-col sm:flex-row gap-3">
                         <div className="flex-1 relative">
                             <Search
                                 className="absolute left-3 top-1/2 transform -translate-y-1/2"
@@ -118,14 +152,14 @@ export default function Products() {
                         </div>
                         <button
                             type="submit"
-                            className="px-6 py-2 bg-[#1C2340] text-white font-sans font-semibold rounded-full hover:bg-[#2D375F] transition-colors"
+                            className="px-6 py-3 sm:py-2 bg-[#1C2340] text-white font-sans font-semibold rounded-full hover:bg-[#2D375F] transition-colors"
                             style={{ fontSize: '14px' }}
                         >
                             Rechercher
                         </button>
                     </div>
 
-                    <div className="flex gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <select
                             value={categoryFilter}
                             onChange={(e) => setCategoryFilter(e.target.value)}
@@ -161,7 +195,46 @@ export default function Products() {
                 ) : products.length === 0 ? (
                     <p className="font-sans text-[#9CA3AF]">Aucun produit trouve</p>
                 ) : (
-                    <div className="overflow-x-auto">
+                    <>
+                    <div className="md:hidden space-y-3">
+                        {products.map((product) => (
+                            <article key={product.id} className="border border-[#F9D7DA] rounded-xl p-3 bg-white">
+                                <div className="flex gap-3">
+                                    <img
+                                        src={getProductImage(product)}
+                                        alt={product.name}
+                                        className="w-20 h-20 object-cover rounded-lg flex-none"
+                                    />
+                                    <div className="min-w-0 flex-1">
+                                        <div className="flex items-start justify-between gap-2">
+                                            <div className="min-w-0">
+                                                <h3 className="font-sans font-semibold text-[#1C2340] truncate" style={{ fontSize: '15px' }}>
+                                                    {product.name}
+                                                </h3>
+                                                <p className="font-sans text-[#5A6080]" style={{ fontSize: '13px' }}>
+                                                    {product.category}
+                                                </p>
+                                            </div>
+                                            <ProductActions product={product} />
+                                        </div>
+                                        <div className="flex items-center justify-between gap-3 mt-3">
+                                            <div>
+                                                <p className="font-sans font-semibold text-[#1C2340]" style={{ fontSize: '14px' }}>
+                                                    {parseFloat(product.price).toLocaleString('fr-DZ')} DZD
+                                                </p>
+                                                <p className="font-sans text-[#9CA3AF]" style={{ fontSize: '12px' }}>
+                                                    Stock: {product.stock}
+                                                </p>
+                                            </div>
+                                            <ProductActiveToggle product={product} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                        ))}
+                    </div>
+
+                    <div className="hidden md:block overflow-x-auto">
                         <table className="w-full">
                             <thead>
                                 <tr className="border-b border-[#F9D7DA]">
@@ -228,40 +301,17 @@ export default function Products() {
                                             )}
                                         </td>
                                         <td className="text-center py-3 px-2">
-                                            <button
-                                                onClick={() => handleToggleActive(product.id, product.is_active)}
-                                                className={`w-12 h-6 rounded-full transition-colors ${product.is_active ? 'bg-[#10B981]' : 'bg-[#9CA3AF]'
-                                                    }`}
-                                            >
-                                                <span
-                                                    className={`block w-5 h-5 bg-white rounded-full transition-transform ${product.is_active ? 'translate-x-6' : 'translate-x-1'
-                                                        }`}
-                                                />
-                                            </button>
+                                            <ProductActiveToggle product={product} />
                                         </td>
                                         <td className="text-center py-3 px-2">
-                                            <div className="flex items-center justify-center gap-2">
-                                                <button
-                                                    onClick={() => handleEdit(product)}
-                                                    className="p-2 rounded-full hover:bg-[#DBEAFE] transition-colors"
-                                                    aria-label="Modifier"
-                                                >
-                                                    <Edit size={16} color="#3B82F6" strokeWidth={1.8} />
-                                                </button>
-                                                <button
-                                                    onClick={() => setDeleteConfirm(product)}
-                                                    className="p-2 rounded-full hover:bg-[#FEE2E2] transition-colors"
-                                                    aria-label="Supprimer"
-                                                >
-                                                    <Trash2 size={16} color="#E63946" strokeWidth={1.8} />
-                                                </button>
-                                            </div>
+                                            <ProductActions product={product} />
                                         </td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
                     </div>
+                    </>
                 )}
             </div>
 

@@ -14,6 +14,8 @@ export default function Settings() {
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [statusMessage, setStatusMessage] = useState('');
+    const [statusType, setStatusType] = useState('success');
 
     useEffect(() => {
         const loadSettings = async () => {
@@ -31,6 +33,8 @@ export default function Settings() {
                 });
             } catch (error) {
                 console.error('Erreur lors du chargement des parametres:', error);
+                setStatusType('error');
+                setStatusMessage('Impossible de charger les parametres.');
             } finally {
                 setLoading(false);
             }
@@ -42,12 +46,15 @@ export default function Settings() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaving(true);
+        setStatusMessage('');
 
         try {
             await bulkUpdateSettings(formData);
-            alert('Parametres enregistres avec succes');
+            setStatusType('success');
+            setStatusMessage('Parametres enregistres avec succes.');
         } catch {
-            alert('Erreur lors de la sauvegarde des parametres');
+            setStatusType('error');
+            setStatusMessage('Erreur lors de la sauvegarde des parametres.');
         } finally {
             setSaving(false);
         }
@@ -65,7 +72,7 @@ export default function Settings() {
                 Parametres
             </h2>
 
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-[#F9D7DA]">
+            <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-[#F9D7DA]">
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
                         <label className="block font-sans font-semibold text-[#1C2340] mb-2" style={{ fontSize: '14px' }}>
@@ -182,14 +189,26 @@ export default function Settings() {
                         />
                     </div>
 
-                    <button
-                        type="submit"
-                        disabled={saving}
-                        className="w-full md:w-auto px-8 py-3 bg-[#1C2340] text-white font-sans font-semibold rounded-full hover:bg-[#2D375F] transition-colors disabled:opacity-50"
-                        style={{ fontSize: '15px' }}
-                    >
-                        {saving ? 'Enregistrement...' : 'Enregistrer les parametres'}
-                    </button>
+                    {statusMessage && (
+                        <p
+                            className={`font-sans ${statusType === 'error' ? 'text-[#E63946]' : 'text-[#10B981]'}`}
+                            style={{ fontSize: '13px' }}
+                            aria-live="polite"
+                        >
+                            {statusMessage}
+                        </p>
+                    )}
+
+                    <div className="sticky bottom-0 -mx-4 sm:mx-0 px-4 sm:px-0 py-3 sm:py-0 bg-white/95 sm:bg-transparent border-t sm:border-0 border-[#F9D7DA]">
+                        <button
+                            type="submit"
+                            disabled={saving}
+                            className="w-full md:w-auto px-8 py-3 bg-[#1C2340] text-white font-sans font-semibold rounded-full hover:bg-[#2D375F] transition-colors disabled:opacity-50"
+                            style={{ fontSize: '15px' }}
+                        >
+                            {saving ? 'Enregistrement...' : 'Enregistrer les parametres'}
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>

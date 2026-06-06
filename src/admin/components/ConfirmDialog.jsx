@@ -11,9 +11,9 @@ export default function ConfirmDialog({ isOpen, onClose, onConfirm, title, messa
                 aria-hidden="true"
                 style={{ backdropFilter: 'blur(2px)' }}
             />
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-3 sm:p-4">
                 <div
-                    className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl"
+                    className="bg-white rounded-2xl p-5 sm:p-6 w-full max-w-md shadow-xl"
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="confirm-title"
@@ -39,7 +39,7 @@ export default function ConfirmDialog({ isOpen, onClose, onConfirm, title, messa
                         {message}
                     </p>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-3">
                         <button
                             onClick={onClose}
                             className="flex-1 border border-[#EBB4BB] text-[#1C2340] font-sans font-semibold rounded-full hover:bg-[#FDE8EC] transition-colors"
