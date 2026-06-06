@@ -11,7 +11,7 @@ function InstagramIcon({ size = 20, color = '#1C2340' }) {
   );
 }
 
-const MAPS_URL = 'https://maps.app.goo.gl/eQraDcmneZppr5d26';
+const MAPS_URL = 'https://maps.app.goo.gl/ed64wpYFhfYRzWwg6';
 
 export default function ContactSection({ settings = DEFAULT_STORE_SETTINGS }) {
   const instagramUrl = settings.instagram_url || DEFAULT_STORE_SETTINGS.instagram_url;

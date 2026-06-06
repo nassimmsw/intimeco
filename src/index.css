@@ -19,6 +19,14 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+html {
+  scroll-padding-top: 76px;
+}
+
+section[id] {
+  scroll-margin-top: 76px;
+}
+
 /* =============================================
    TYPOGRAPHY UTILITIES
    ============================================= */

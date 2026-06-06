@@ -461,7 +461,7 @@ export default function Orders() {
                                     className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full border border-[#EBB4BB] font-sans text-[#1C2340] hover:bg-[#FDE8EC] transition-colors"
                                     style={{ fontSize: '14px' }}
                                 >
-                                    <Eye size={16} strokeWidth={1.8} />
+                                    <Eye className="flex-none" size={16} strokeWidth={1.8} aria-hidden="true" />
                                     Voir la commande
                                 </button>
                             </article>
@@ -531,10 +531,10 @@ export default function Orders() {
                                         <td className="text-center py-3 px-2">
                                             <button
                                                 onClick={() => handleViewOrder(order.id)}
-                                                className="inline-flex items-center gap-1 px-3 py-1 rounded-full border border-[#EBB4BB] font-sans text-[#1C2340] hover:bg-[#FDE8EC] transition-colors"
+                                                className="inline-flex min-w-[78px] h-8 items-center justify-center gap-1.5 px-3 rounded-full border border-[#EBB4BB] font-sans text-[#1C2340] hover:bg-[#FDE8EC] transition-colors"
                                                 style={{ fontSize: '13px' }}
                                             >
-                                                <Eye size={14} strokeWidth={1.8} />
+                                                <Eye className="flex-none" size={14} strokeWidth={1.8} aria-hidden="true" />
                                                 Voir
                                             </button>
                                         </td>

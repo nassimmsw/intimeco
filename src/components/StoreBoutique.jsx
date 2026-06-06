@@ -1,8 +1,9 @@
 import { MapPin, Clock, ExternalLink } from 'lucide-react';
 import { DEFAULT_STORE_SETTINGS } from '../hooks/useStoreSettings';
 
-const MAPS_URL = 'https://maps.app.goo.gl/eQraDcmneZppr5d26';
-const EMBED_URL = 'https://www.google.com/maps?q=36.4722,2.8277&z=16&output=embed';
+const MAPS_URL = 'https://maps.app.goo.gl/ed64wpYFhfYRzWwg6';
+const MAP_COORDS = '36.5381866,3.8321025';
+const EMBED_URL = `https://www.google.com/maps?q=${MAP_COORDS}&z=18&output=embed`;
 
 export default function StoreBoutique({ settings = DEFAULT_STORE_SETTINGS }) {
   const storeName = settings.store_name || DEFAULT_STORE_SETTINGS.store_name;
@@ -12,7 +13,7 @@ export default function StoreBoutique({ settings = DEFAULT_STORE_SETTINGS }) {
   function getDirections() {
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     if (isMobile) {
-      window.open(`geo:36.4722,2.8277?q=36.4722,2.8277(${encodeURIComponent(storeName)})`, '_self');
+      window.open(`geo:${MAP_COORDS}?q=${MAP_COORDS}(${encodeURIComponent(storeName)})`, '_self');
     } else {
       window.open(MAPS_URL, '_blank', 'noopener,noreferrer');
     }
