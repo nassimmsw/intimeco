@@ -7,6 +7,17 @@ const SIZES = ['XS', 'S', 'M', 'L', 'XL', '85B', '90C', '95D'];
 const COLORS = ['noir', 'rose', 'blanc', 'nude', 'rouge', 'lilas'];
 const CATEGORIES = ['Soutien-gorge', 'Ensembles', 'Culottes', 'Pyjamas', 'Nuisettes', 'Corsets'];
 
+function restoreScrollPosition(container, scrollTop) {
+    if (!container) return;
+
+    requestAnimationFrame(() => {
+        container.scrollTop = scrollTop;
+        requestAnimationFrame(() => {
+            container.scrollTop = scrollTop;
+        });
+    });
+}
+
 export default function ProductForm({ product, onClose }) {
     const [formData, setFormData] = useState({
         name: product?.name || '',
@@ -23,20 +34,66 @@ export default function ProductForm({ product, onClose }) {
     });
     const [uploading, setUploading] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [formError, setFormError] = useState('');
+
+    const validateProductData = () => {
+        const name = formData.name.trim();
+        const price = Number.parseFloat(formData.price);
+        const originalPrice = formData.original_price === '' ? null : Number.parseFloat(formData.original_price);
+        const stock = Number.parseInt(formData.stock, 10);
+
+        if (!name) {
+            return { error: 'Ajoutez le nom du produit.' };
+        }
+
+        if (!Number.isFinite(price) || price < 0) {
+            return { error: 'Ajoutez un prix valide.' };
+        }
+
+        if (formData.original_price !== '' && (!Number.isFinite(originalPrice) || originalPrice < 0)) {
+            return { error: 'Ajoutez un prix original valide ou laissez le champ vide.' };
+        }
+
+        if (!Number.isInteger(stock) || stock < 0) {
+            return { error: 'Ajoutez un stock valide.' };
+        }
+
+        return {
+            productData: {
+                ...formData,
+                name,
+                description: formData.description.trim(),
+                price,
+                original_price: originalPrice,
+                stock,
+                sizes: Array.isArray(formData.sizes) ? formData.sizes : [],
+                colors: Array.isArray(formData.colors) ? formData.colors : [],
+                images: Array.isArray(formData.images) ? formData.images : [],
+                badge: formData.badge || null,
+            },
+        };
+    };
 
     const handleImageUpload = async (e) => {
+        const input = e.currentTarget;
+        const scrollContainer = input.closest('[data-product-form-scroll]');
+        const scrollTop = scrollContainer?.scrollTop ?? 0;
         const files = Array.from(e.target.files || []);
         if (files.length === 0) return;
 
         setUploading(true);
+        setFormError('');
         try {
             const uploadPromises = files.map((file) => uploadProductImage(file));
             const urls = await Promise.all(uploadPromises);
             setFormData((prev) => ({ ...prev, images: [...prev.images, ...urls] }));
+            restoreScrollPosition(scrollContainer, scrollTop);
         } catch (error) {
-            alert(error?.message || 'Erreur lors du telechargement des images');
+            setFormError(error?.message || 'Erreur lors du telechargement des images');
         } finally {
+            input.value = '';
             setUploading(false);
+            restoreScrollPosition(scrollContainer, scrollTop);
         }
     };
 
@@ -48,7 +105,7 @@ export default function ProductForm({ product, onClose }) {
                 images: prev.images.filter((img) => img !== url),
             }));
         } catch (error) {
-            alert(error?.message || 'Erreur lors de la suppression de l\'image');
+            setFormError(error?.message || 'Erreur lors de la suppression de l\'image');
         }
     };
 
@@ -71,20 +128,21 @@ export default function ProductForm({ product, onClose }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setFormError('');
+
+        if (uploading) {
+            setFormError('Attendez la fin du telechargement des images avant de sauvegarder.');
+            return;
+        }
+
+        const { productData, error: validationError } = validateProductData();
+        if (validationError) {
+            setFormError(validationError);
+            return;
+        }
+
         setSaving(true);
-
         try {
-            const productData = {
-                ...formData,
-                price: parseFloat(formData.price),
-                original_price: formData.original_price ? parseFloat(formData.original_price) : null,
-                stock: parseInt(formData.stock, 10),
-                sizes: Array.isArray(formData.sizes) ? formData.sizes : [],
-                colors: Array.isArray(formData.colors) ? formData.colors : [],
-                images: Array.isArray(formData.images) ? formData.images : [],
-                badge: formData.badge || null,
-            };
-
             if (product) {
                 await updateProduct(product.id, productData);
             } else {
@@ -94,7 +152,7 @@ export default function ProductForm({ product, onClose }) {
             onClose();
         } catch (error) {
             console.error('Erreur lors de la sauvegarde:', error);
-            alert(error?.message || 'Erreur lors de la sauvegarde du produit');
+            setFormError(error?.message || 'Erreur lors de la sauvegarde du produit');
         } finally {
             setSaving(false);
         }
@@ -103,18 +161,18 @@ export default function ProductForm({ product, onClose }) {
     return (
         <>
             <div className="fixed inset-0 z-50 bg-[#1C2340]/40" onClick={onClose} style={{ backdropFilter: 'blur(2px)' }} />
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto" data-product-form-scroll>
                 <div className="bg-white rounded-2xl p-6 w-full max-w-3xl shadow-xl my-8">
                     <div className="flex items-center justify-between mb-6">
                         <h3 className="font-serif text-[#1C2340]" style={{ fontSize: '24px', fontWeight: 600 }}>
                             {product ? 'Modifier le produit' : 'Ajouter un produit'}
                         </h3>
-                        <button onClick={onClose} aria-label="Fermer">
+                        <button type="button" onClick={onClose} aria-label="Fermer">
                             <X size={24} color="#1C2340" strokeWidth={1.8} />
                         </button>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-6" noValidate>
                         <div>
                             <label className="block font-sans font-semibold text-[#1C2340] mb-2" style={{ fontSize: '14px' }}>
                                 Nom du produit
@@ -123,7 +181,7 @@ export default function ProductForm({ product, onClose }) {
                                 type="text"
                                 value={formData.name}
                                 onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
-                                required
+                                aria-invalid={!formData.name.trim()}
                                 className="w-full border border-[#EBB4BB] rounded-lg px-4 py-3 font-sans text-[#1C2340] outline-none focus:border-[#1C2340]"
                                 style={{ fontSize: '14px' }}
                             />
@@ -156,8 +214,8 @@ export default function ProductForm({ product, onClose }) {
                                     type="number"
                                     value={formData.stock}
                                     onChange={(e) => setFormData((prev) => ({ ...prev, stock: e.target.value }))}
-                                    required
                                     min="0"
+                                    aria-invalid={!Number.isInteger(Number.parseInt(formData.stock, 10)) || Number.parseInt(formData.stock, 10) < 0}
                                     className="w-full border border-[#EBB4BB] rounded-lg px-4 py-3 font-sans text-[#1C2340] outline-none focus:border-[#1C2340]"
                                     style={{ fontSize: '14px' }}
                                 />
@@ -186,9 +244,9 @@ export default function ProductForm({ product, onClose }) {
                                     type="number"
                                     value={formData.price}
                                     onChange={(e) => setFormData((prev) => ({ ...prev, price: e.target.value }))}
-                                    required
                                     min="0"
                                     step="0.01"
+                                    aria-invalid={!Number.isFinite(Number.parseFloat(formData.price)) || Number.parseFloat(formData.price) < 0}
                                     className="w-full border border-[#EBB4BB] rounded-lg px-4 py-3 font-sans text-[#1C2340] outline-none focus:border-[#1C2340]"
                                     style={{ fontSize: '14px' }}
                                 />
@@ -296,24 +354,22 @@ export default function ProductForm({ product, onClose }) {
                             <label className="block font-sans font-semibold text-[#1C2340] mb-2" style={{ fontSize: '14px' }}>
                                 Images
                             </label>
-                            <div className="border-2 border-dashed border-[#EBB4BB] rounded-lg p-6">
+                            <div className="relative border-2 border-dashed border-[#EBB4BB] rounded-lg p-6 hover:bg-[#FDE8EC] transition-colors">
                                 <input
                                     type="file"
                                     accept="image/jpeg,image/png,image/webp"
                                     multiple
                                     onChange={handleImageUpload}
-                                    id="image-upload"
-                                    className="hidden"
+                                    disabled={uploading}
+                                    aria-label="Telecharger des images produit"
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
                                 />
-                                <label
-                                    htmlFor="image-upload"
-                                    className="flex flex-col items-center gap-2 cursor-pointer"
-                                >
+                                <div className="flex flex-col items-center gap-2 pointer-events-none">
                                     <Upload size={32} color="#9CA3AF" strokeWidth={1.8} />
                                     <p className="font-sans text-[#9CA3AF]" style={{ fontSize: '14px' }}>
                                         {uploading ? 'Telechargement...' : 'Cliquez pour telecharger des images'}
                                     </p>
-                                </label>
+                                </div>
                             </div>
 
                             {formData.images.length > 0 && (
@@ -381,6 +437,14 @@ export default function ProductForm({ product, onClose }) {
                             </label>
                         </div>
 
+                        <div aria-live="polite" style={{ minHeight: '18px' }}>
+                            {formError && (
+                                <p className="font-sans text-[#E63946]" style={{ fontSize: '13px' }}>
+                                    {formError}
+                                </p>
+                            )}
+                        </div>
+
                         <div className="flex items-center gap-3 pt-4 border-t border-[#F9D7DA]">
                             <button
                                 type="button"
@@ -392,11 +456,11 @@ export default function ProductForm({ product, onClose }) {
                             </button>
                             <button
                                 type="submit"
-                                disabled={saving}
+                                disabled={saving || uploading}
                                 className="flex-1 bg-[#1C2340] text-white font-sans font-semibold rounded-full hover:bg-[#2D375F] transition-colors disabled:opacity-50"
                                 style={{ height: '48px', fontSize: '14px' }}
                             >
-                                {saving ? 'Enregistrement...' : 'Enregistrer'}
+                                {saving ? 'Enregistrement...' : uploading ? 'Telechargement...' : 'Enregistrer'}
                             </button>
                         </div>
                     </form>
